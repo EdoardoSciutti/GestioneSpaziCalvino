@@ -18,3 +18,8 @@ Fasi:
 3 - Collegare i Due
 
   3.1 - Collegare il FrontEnd al BackEnd
+
+4 - Test
+
+  4.1 - Prove con Xampp
+  4.2 - Caricamento sul database del Calvino
