@@ -1,0 +1,22 @@
+{
+  "name": "gestionespazicalvino",
+  "version": "1.0.0",
+  "description": "gestione prenotazione spazi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EdoardoSciutti/GestioneSpaziCalvino.git"
+  },
+  "author": "Sciutti Edoardo, Gesualdi Simone, Tacchino Francesco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EdoardoSciutti/GestioneSpaziCalvino/issues"
+  },
+  "homepage": "https://github.com/EdoardoSciutti/GestioneSpaziCalvino#readme",
+  "dependencies": {
+    "express": "^4.19.1"
+  }
+}
