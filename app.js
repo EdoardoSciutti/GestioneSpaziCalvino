@@ -4,7 +4,7 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
-    res.render('./../WebSite/index.ejs');
+    res.render('../public/views/index.ejs');
 })
 
 app.listen(3000);
