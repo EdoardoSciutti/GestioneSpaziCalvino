@@ -23,3 +23,8 @@ Fasi:
 
   4.1 - Prove con Xampp
   4.2 - Caricamento sul database del Calvino
+
+__FUNZIONALITÀ DELL'APPLICAZIONE__:
+Gli user sono coloro che prenoteranno le stanze, e essi faranno parte di una compagnia.
+Gli user saranno gli impiegati di un'azienda, e questi potranno prenotare delle stanze. 
+Nel caso in cui siano i professori, saranno impiegati del Calvino, così come i rappresentanti d'istituto. 

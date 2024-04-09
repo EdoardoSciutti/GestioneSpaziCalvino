@@ -42,7 +42,13 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS bookings (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT REFERENCES companies(company_id),
+    room_id INT REFERENCES rooms(room_id),
     date_day DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS rooms (
+    room_id INT AUTO_INCREMENT PRIMARY KEY,
+    description VARCHAR(50) NOT NULL,
 );
