@@ -18,7 +18,8 @@
   "homepage": "https://github.com/EdoardoSciutti/GestioneSpaziCalvino#readme",
   "dependencies": {
     "ejs": "^3.1.9",
-    "express": "^4.19.1",
+    "express": "^4.19.2",
+    "mysql": "^2.18.1",
     "mysql2": "^3.9.4"
   },
   "devDependencies": {
