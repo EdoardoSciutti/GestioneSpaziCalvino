@@ -38,14 +38,12 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 CREATE TABLE IF NOT EXISTS rooms (
     room_id INT AUTO_INCREMENT PRIMARY KEY,
-    booking_id INT REFERENCES bookings(booking_id),
-    description VARCHAR(50) NOT NULL,
+    description VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users_roles (
-    user_role_id INT REFERENCES roles(role_id),
+    user_role_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT REFERENCES users(user_id),
-    role_id INT REFERENCES roles(role_id),
-    PRIMARY KEY (user_role_id),
+    role_id INT REFERENCES roles(role_id)
     UNIQUE (user_id, role_id)
 );
