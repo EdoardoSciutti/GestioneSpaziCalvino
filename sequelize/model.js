@@ -98,3 +98,5 @@ Users.hasMany(Bookings, { foreignKey: 'user_id' });
 
 Bookings.belongsTo(Rooms, { foreignKey: 'room_id' });
 Rooms.hasMany(Bookings, { foreignKey: 'room_id' });
+
+module.exports = {Users, Rooms, Roles, Bookings, UsersRoles} 

@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 //modelli sql
-const { User, Rooms, Roles, Bookings, UserRoles } = require('../sequelize/model.js')
+const { Users, Rooms, Roles, Bookings, UserRoles } = require('../sequelize/model.js')
 
 //.env
 require('dotenv').config();
@@ -16,23 +16,30 @@ router.get('/login', async(req, res) => {
     res.render('../public/views/login.ejs');
 });
 
+//jwt
+const jwt = require('jsonwebtoken');
+
 router.get('/signup', (req, res) => {
     res.render('../public/views/signup.ejs');
 });
 
 //registrazione
 router.post('/register', (req, res) => {
-    const { email, password } = req.body
+    const { email, password, name, surname } = req.body
     try {
-        bcrypt.hash(password, 10, (err, hash) => {
+        bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS_SECRET), (err, hash) => {
             if (err) {
                 res.status(500).json({ error: err.message });
             return;
             }
-            User.findOrCreate({
+            Users.findOrCreate({
                 where: {
                     email: email,
-                    password: hash
+                },
+                defaults: {
+                    password: hash,
+                    name: name,
+                    surname: surname
                 }
             }).then(([user, created]) => {
                 if (created) {
