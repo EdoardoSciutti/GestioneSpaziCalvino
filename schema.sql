@@ -19,36 +19,31 @@ CREATE TABLE IF NOT EXISTS roles(
     role_name VARCHAR(20) NOT NULL CHECK (role_name IN ('admin', 'user'))
 );
 
-CREATE TABLE IF NOT EXISTS companies (
-    company_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    address VARCHAR(50) NOT NULL,
-    city VARCHAR(20) NOT NULL,
-    country VARCHAR(20) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    email VARCHAR(50) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(20) NOT NULL,
     surname VARCHAR(20) NOT NULL,
     email VARCHAR(50) NOT NULL,
-    company_id INT REFERENCES companies(company_id),
-    role INT REFERENCES roles(role_id),
     password VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS bookings (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
-    company_id INT REFERENCES companies(company_id),
     room_id INT REFERENCES rooms(room_id),
     date_day DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
+    user_id INT REFERENCES users(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS rooms (
     room_id INT AUTO_INCREMENT PRIMARY KEY,
-    description VARCHAR(50) NOT NULL,
+    description VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users_roles (
+    user_role_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    role_id INT REFERENCES roles(role_id)
+    UNIQUE (user_id, role_id)
 );

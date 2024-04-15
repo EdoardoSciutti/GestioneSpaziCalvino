@@ -4,7 +4,7 @@
   "description": "gestione prenotazione spazi",
   "main": "app.js",
   "scripts": {
-    "devStart": "nodemon app.js"
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -17,10 +17,13 @@
   },
   "homepage": "https://github.com/EdoardoSciutti/GestioneSpaziCalvino#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "ejs": "^3.1.9",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
-    "mysql2": "^3.9.4"
+    "mysql2": "^3.9.4",
+    "sequelize": "^6.37.2"
   },
   "devDependencies": {
     "dotenv": "^16.4.5",
