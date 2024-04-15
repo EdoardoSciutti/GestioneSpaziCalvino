@@ -4,8 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
   var giornoEl = document.querySelector('.giorno');
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: 'it',
     initialView: 'dayGridMonth',
     height: 'auto',
+    headerToolbar: {
+      left: 'prev,next',
+      center: 'title',
+    },
     dateClick: function(info) {
       aggiungiEventoEl.style.display = 'block';
       giornoEl.textContent = "Aggiungi un Evento nel giorno " + info.dateStr;
