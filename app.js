@@ -9,6 +9,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //set di ejs
 app.set('view engine', 'ejs');
 
+//cookie
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 //routes
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/auth', require('./routes/login-signup'));

@@ -43,7 +43,7 @@ router.post('/register', (req, res) => {
                 }
             }).then(([user, created]) => {
                 if (created) {
-                    const user_for_token = { email: user.email, id: user.id };
+                    const user_for_token = { email: user.email, id: user.user_id };
                     const access_token = jwt.sign(user_for_token, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
                     const refresh_token = jwt.sign(user_for_token, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
                     res.cookie('access_token', access_token, { httpOnly: true });
@@ -74,7 +74,7 @@ router.post('/login', (req, res) => {
           bcrypt.compare(dati.password, user.password, function(err, result) {
             if(result) {
               // Le password corrispondono
-              const user_for_token = { email: user.email, id: user.id };
+              const user_for_token = { email: user.email, id: user.user_id };
               const access_token = jwt.sign(user_for_token, process.env.ACCESS_TOKEN_SECRET, {
                 expiresIn: 86400 // scade in 24 ore
               });

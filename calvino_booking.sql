@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Apr 12, 2024 alle 12:52
+-- Creato il: Apr 15, 2024 alle 12:05
 -- Versione del server: 10.1.37-MariaDB
 -- Versione PHP: 7.3.0
 
@@ -36,6 +36,27 @@ CREATE TABLE `bookings` (
   `user_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
+--
+-- Trigger `bookings`
+--
+DELIMITER $$
+CREATE TRIGGER `check_booking_time` BEFORE INSERT ON `bookings` FOR EACH ROW BEGIN
+  DECLARE conflicting_booking_count INT;
+
+  SELECT COUNT(*) INTO conflicting_booking_count
+  FROM bookings
+  WHERE new.start_time < end_time
+  AND new.end_time > start_time
+  AND new.room_id = room_id;
+
+  IF conflicting_booking_count > 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Cannot create booking due to conflicting time slot.';
+  END IF;
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -58,6 +79,14 @@ CREATE TABLE `rooms` (
   `description` varchar(50) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
+--
+-- Dump dei dati per la tabella `rooms`
+--
+
+INSERT INTO `rooms` (`room_id`, `description`) VALUES
+(1, 'agorà'),
+(2, 'info_1');
+
 -- --------------------------------------------------------
 
 --
@@ -69,8 +98,16 @@ CREATE TABLE `users` (
   `name` varchar(20) COLLATE latin1_general_ci NOT NULL,
   `surname` varchar(20) COLLATE latin1_general_ci NOT NULL,
   `email` varchar(50) COLLATE latin1_general_ci NOT NULL,
-  `password` varchar(20) COLLATE latin1_general_ci NOT NULL
+  `password` varchar(255) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+--
+-- Dump dei dati per la tabella `users`
+--
+
+INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`) VALUES
+(3, '', '', 'ciaone', '$2b$10$Cn4yK53TfGWPlre8fAWvmuVa0VpKO4JJfsB7BLbAN6oy.WrVfHJvu'),
+(4, '', '', 'lol', '$2b$10$WeJdDbk3aCbtmYPbFHV0xuxHfEeKbFIKQIz1DjtZNrjpHRSTEmAiG');
 
 -- --------------------------------------------------------
 
@@ -129,7 +166,7 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT per la tabella `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT per la tabella `roles`
@@ -141,13 +178,13 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT per la tabella `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT per la tabella `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT per la tabella `users_roles`
