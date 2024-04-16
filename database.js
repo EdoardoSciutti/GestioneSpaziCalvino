@@ -17,7 +17,7 @@ const pool = mysql.createPool({
 });
 
 //   +--------------------------------------------------+
-//   |   I export the connection to the database server  |
+//   |   I export the connection to the database server |
 //   +--------------------------------------------------+
 
 module.exports = [pool.promise()];
