@@ -1,3 +1,5 @@
+
+const {authenticateToken} = require('../auth.js')
 //di base
 const express = require('express')
 const router = express.Router()
@@ -106,6 +108,10 @@ router.post('/login', (req, res) => {
       res.status(500).send('Internal Server Error', 'errore:', error);
       console.log(error);
     });
+});
+
+router.get('/isLogged', authenticateToken, (req, res) => {
+  res.status(200).json({ success: true, message: 'User logged' });
 });
 
 
