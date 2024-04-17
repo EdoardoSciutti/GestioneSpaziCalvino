@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 -- Struttura della tabella `bookings`
 --
 
-CREATE TABLE `bookings` (
+CREATE TABLE IF NOT EXISTS `bookings` (
   `booking_id` int(11) NOT NULL,
   `room_id` int(11) DEFAULT NULL,
   `date_day` date NOT NULL,
@@ -63,7 +63,7 @@ DELIMITER ;
 -- Struttura della tabella `roles`
 --
 
-CREATE TABLE `roles` (
+CREATE TABLE IF NOT EXISTS `roles` (
   `role_id` int(11) NOT NULL,
   `role_name` varchar(20) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -74,7 +74,7 @@ CREATE TABLE `roles` (
 -- Struttura della tabella `rooms`
 --
 
-CREATE TABLE `rooms` (
+CREATE TABLE IF NOT EXISTS `rooms` (
   `room_id` int(11) NOT NULL,
   `description` varchar(50) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -93,7 +93,7 @@ INSERT INTO `rooms` (`room_id`, `description`) VALUES
 -- Struttura della tabella `users`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int(11) NOT NULL,
   `name` varchar(20) COLLATE latin1_general_ci NOT NULL,
   `surname` varchar(20) COLLATE latin1_general_ci NOT NULL,
@@ -115,7 +115,7 @@ INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`) VALUES
 -- Struttura della tabella `users_roles`
 --
 
-CREATE TABLE `users_roles` (
+CREATE TABLE IF NOT EXISTS `users_roles` (
   `user_role_id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `role_id` int(11) DEFAULT NULL
