@@ -7,6 +7,9 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
         <style>
+            body {
+                overflow-x: hidden;
+            }
             .datepicker-dropdown {
                 z-index: 1600;
             }
@@ -31,7 +34,14 @@
                 </div>
             </div>
         </nav>
-        <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="alert alert-danger mt-5" role="alert" id = "logga">
+                    Effettua l'accesso <a href="/login">qui</a> per visualizzare il sito
+                </div>
+            </div>
+        </div>
+        <div class="container" id="calendar" style="display: none;">
             <h1 class="mt-5 mb-4">Calendario Settimanale</h1>
             <div class="row">
                 <div class="col">
@@ -45,7 +55,7 @@
             </div>
         </div>
 
-        <div class="text-center mt-3">
+        <div class="text-center mt-3" id="bottoni" style="display: none;">
             <button type="button" class="btn btn-secondary btn-lg me-3">Aggiungi Evento</button>
             <button type="button" class="btn btn-secondary btn-lg ms-3">Rimuovi Evento</button>
         </div>
@@ -57,23 +67,27 @@
             window.onload = function() {
                 $('#datepicker').datepicker('setDate', new Date());
                 generateWeekCalendar(new Date());
-                fetch('http://localhost:3000/api/auth/isLogged', {
-                    method: 'GET',
-                    credentials: 'include'
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    } else {
-                        return response.json();
-                    }
-                })
-                .then(data => {
-                    if (data) console.log(data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+                fetch('/isLogged')
+                    .then(response => response.json())
+                    .then(data => {
+                        var calendar = document.getElementById('calendar');
+                        var bottoni = document.getElementById('bottoni');
+                        var messaggio = document.getElementById('logga');
+                        if (data.success) {
+                            console.log('L\'utente è loggato');
+                            calendar.style.display = 'block'; // Mostra il calendario se l'utente è loggato
+                            bottoni.style.display = 'block'; // Mostra i bottoni se l'utente è loggato
+                            messaggio.style.display = 'none'; // Nasconde il messaggio se l'utente è loggato
+                        } else {
+                            console.log('L\'utente non è loggato');
+                            calendar.style.display = 'none'; // Nasconde il calendario se l'utente non è loggato
+                            bottoni.style.display = 'none'; // Nasconde i bottoni se l'utente non è loggato
+                            messaggio.style.display = 'block'; // Mostra il messaggio se l'utente non è loggato
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Errore:', error);
+                    });
             }
             $(document).ready(function () {
                 $('#datepicker').datepicker({
