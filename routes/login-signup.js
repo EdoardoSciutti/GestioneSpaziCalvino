@@ -23,7 +23,7 @@ router.get('/signup', (req, res) => {
     res.render('../public/views/signup.ejs');
 });
 
-//registrazione
+
 router.post('/register', (req, res) => {
   const { email, password, name, surname } = req.body
   try {

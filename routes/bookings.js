@@ -9,7 +9,6 @@ const {authenticateToken} = require('../auth.js')
 //modelli sql
 const { Users, Rooms, Roles, Bookings, UserRoles } = require('../sequelize/model.js')
 const { Op } = require('sequelize');
-const { includes } = require('../database.js');
 
 //   +--------------------------------------------------+
 //   |   I start to write the code for the web server   |
