@@ -52,42 +52,42 @@
     </div>
 
     <script>
-    function buttonRegistrati(event){
-        event.preventDefault();
-    
-        let nome = document.getElementById('inputNome').value;
-        let cognome = document.getElementById('inputCognome').value;
-        let email = document.getElementById('inputEmail').value;
-        let password = document.getElementById('inputPassword').value;
-        let password2 = document.getElementById('inputPassword2').value;
-    
-        if (password !== password2) {
-            console.log("Le password non coincidono");
-            return;
-        }
+        function buttonRegistrati(event){
+            event.preventDefault();
+        
+            let nome = document.getElementById('inputNome').value;
+            let cognome = document.getElementById('inputCognome').value;
+            let email = document.getElementById('inputEmail').value;
+            let password = document.getElementById('inputPassword').value;
+            let password2 = document.getElementById('inputPassword2').value;
+        
+            if (password !== password2) {
+                console.log("Le password non coincidono");
+                return;
+            }
 
-        let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            console.log("L'email non è valida");
-            let form = document.getElementById('inputEmail');
-            form.style.backgroundColor = 'red';
-            return;
+            let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                console.log("L'email non è valida");
+                let form = document.getElementById('inputEmail');
+                form.style.backgroundColor = 'red';
+                return;
+            }
+        
+            let data = {
+                name: nome,
+                surname: cognome,
+                email: email.toLowerCase(),
+                password: password
+            };
+        
+            axios.post('http://localhost:3000/api/auth/register', data)
+            .then((response) => {
+                console.log(response);
+            }, (error) => {
+                console.log(error);
+            });
         }
-    
-        let data = {
-            name: nome,
-            surname: cognome,
-            email: email.toLowerCase(),
-            password: password
-        };
-    
-        axios.post('http://localhost:3000/api/auth/register', data)
-        .then((response) => {
-            console.log(response);
-        }, (error) => {
-            console.log(error);
-        });
-    }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
