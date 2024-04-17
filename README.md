@@ -29,7 +29,7 @@ Gli user sono coloro che prenoteranno le stanze, e essi faranno parte di una com
 Gli user saranno gli impiegati di un'azienda, e questi potranno prenotare delle stanze. 
 Nel caso in cui siano i professori, saranno impiegati del Calvino, così come i rappresentanti d'istituto. 
 
-PER SCIUTTI: (tette culo)
+PER SCIUTTI: (tette culo solo se <= 12)
 registrzazione (http://localhost:3000/api/auth/register) : name, surname, email, password
 login (http://localhost:3000/api/auth/login): email, password
 prenotazione (http://localhost:3000/api/bookings/booksroom): date, room, start_time, end_time
