@@ -133,7 +133,13 @@
             .then((response) => {
                 window.location.href = "/login";
             }, (error) => {
-                console.log(error);
+                if (error.response && error.response.status === 400) {
+                    errorMessage.style.display = 'block';
+                    errorMessage.textContent = 'Email già utilizzata';
+                    email.classList.add('is-invalid');
+                } else {
+                    console.log(error);
+                }
             });
         }
         document.getElementById('flexCheckDefault').addEventListener('change', function() {
