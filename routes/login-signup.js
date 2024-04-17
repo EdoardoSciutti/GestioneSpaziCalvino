@@ -23,7 +23,13 @@ router.get('/signup', (req, res) => {
     res.render('../public/views/signup.ejs');
 });
 
-
+/*
+    Description: register a new user
+    Path: http://localhost:3000/api/auth/register
+    Method: POST
+    Response: a message that confirms the registration
+    Requirement: email, password, name, surname (all in the body)
+ */
 router.post('/register', (req, res) => {
   const { email, password, name, surname } = req.body
   try {
@@ -57,6 +63,13 @@ router.post('/register', (req, res) => {
   }
 });
 
+/*
+    Description: login a user
+    Path: http://localhost:3000/api/auth/login
+    Method: POST
+    Response: a message that confirms the login and a cookie with the access and refresh token
+    Requirement: email, password (all in the body)
+ */
 router.post('/login', (req, res) => {
   const dati = req.body;
   Users.findOne({
