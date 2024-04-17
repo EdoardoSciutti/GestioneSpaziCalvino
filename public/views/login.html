@@ -89,9 +89,13 @@
                 .then((response) => {
                     window.location.href = "/";
                 },  (error) => {
-                    if (error.response && error.response.status === 200) {
+                    if (error.response && error.response.status === 404) {
                         errorMessage.style.display = 'block';
                         errorMessage.textContent = 'Utente inesistente';
+                    } else if (error.response && error.response.status === 401) {
+                        errorMessage.style.display = 'block';
+                        errorMessage.textContent = 'Password errata';
+                        password.classList.add('is-invalid');
                     } else {
                         console.log(error);
                     }

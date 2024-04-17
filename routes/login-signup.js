@@ -81,10 +81,10 @@ router.post('/login', (req, res) => {
   })
     .then((user) => {
       if (user == null) {
-        res.status(200).json({ success: false, message: 'L\'user non esiste.' });
+        res.status(404).json({ success: false, message: 'L\'user non esiste.' });
       } else {
         console.log(user);
-        bcrypt.compare(dati.password, user.password, function(err, result) {
+        bcrypt.compare(dati.password, user.password, function(_, result) {
           if(result) {
             // Le password corrispondono
             const user_for_token = { email: user.email, id: user.user_id };
@@ -99,7 +99,7 @@ router.post('/login', (req, res) => {
             res.status(200).json({ success: true, message: 'L\'user esiste.'});
           } else {
             // Le password non corrispondono
-            res.status(200).json({ success: false, message: 'Password errata.' });
+            res.status(401).json({ success: false, message: 'Password errata.' });
           }
         });
       }
