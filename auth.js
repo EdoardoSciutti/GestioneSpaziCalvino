@@ -14,11 +14,11 @@ function authenticateToken(req, res, next) {
       if (err) {
         console.log(err);
         if (refresh_token == null){
-          return res.redirect('/login');
+          return res.status(401).json({ success: false, message: 'Token not found' });
         }  
         jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
           if (err){
-            return res.redirect('/login');
+            return res.status(401).json({ success: false, message: 'Dated token' });
           }  
           const access_token = jwt.sign({ name: user.name }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' }); // Genera un nuovo access token
           const refresh_token = jwt.sign({ name: user.name }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' }); // Genera un nuovo refresh token
