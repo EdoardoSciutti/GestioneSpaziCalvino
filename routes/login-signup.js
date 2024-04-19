@@ -110,6 +110,8 @@ router.post('/login', (req, res) => {
     });
 });
 
+
+
 router.get('/isLogged', authenticateToken, (req, res) => {
   res.status(200).json({ success: true, message: 'User logged' });
 });

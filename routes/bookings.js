@@ -85,7 +85,7 @@ router.get('/getBookingsOfRoom/:roomId', authenticateToken, async (req, res) => 
     
     Rooms.findAll({
         where: {
-            id: roomId
+            room_id: roomId
         },
         include: {
             model: Bookings
@@ -94,6 +94,7 @@ router.get('/getBookingsOfRoom/:roomId', authenticateToken, async (req, res) => 
         res.status(200).json(rooms);
     }).catch(error => {
         res.status(500).json({ error: error.message });
+        console.log(error);
     });
 
 });
