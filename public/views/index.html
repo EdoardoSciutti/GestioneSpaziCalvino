@@ -47,10 +47,9 @@
         <div class="container" id="calendar" style="display: none;">
             <h1 class="mt-5 mb-4">Calendario Settimanale</h1>
             <div class="row">
-                <div class="col">
+                <div class="col-md-2">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="datepicker" placeholder="Seleziona una data">
-                        <button class="btn btn-outline-secondary" type="button" id="btn-search">Cerca</button>
+                        <input type="text" class="form-control" id="datepicker" placeholder="Seleziona una data" readonly>
                     </div>
                 </div>
             </div>
@@ -116,13 +115,13 @@
                     console.error('Error:', error);
                 });
             }
+            
             $(document).ready(function () {
                 $('#datepicker').datepicker({
                     dateFormat: "dd mm yy",
                     autoclose: true,
                     todayHighlight: true
-                });
-                $('#btn-search').click(function () {
+                }).on('changeDate', function(e) {
                     var selectedDate = $('#datepicker').datepicker('getDate');
                     if (selectedDate !== null) {
                         generateWeekCalendar(selectedDate);
