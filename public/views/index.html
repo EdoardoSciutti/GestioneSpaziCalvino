@@ -36,7 +36,7 @@
         </nav>
         <div class="row">
             <div class="col-md-8 mx-auto">
-                <div class="alert alert-danger mt-5" role="alert" id = "logga">
+                <div class="alert alert-danger mt-5" role="alert" id = "logga" style="display: none;">
                     Effettua l'accesso <a href="/login">qui</a> per visualizzare il sito
                 </div>
             </div>
@@ -65,6 +65,13 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
         <script>
             window.onload = function() {
+                $('#datepicker').datepicker('setDate', new Date());
+                generateWeekCalendar(new Date());
+
+                var calendar = document.getElementById('calendar');
+                var bottoni = document.getElementById('bottoni');
+                var messaggio = document.getElementById('logga');
+
                 fetch('http://localhost:3000/api/auth/isLogged', {
                     method: 'GET',
                     credentials: 'include' // Include cookies in the request
@@ -77,7 +84,20 @@
                     }
                 })
                 .then(data => {
-                    if (data) console.log(data);
+                    if (data) {
+                        console.log(data);
+                        if (data.success) {
+                            console.log('L\'utente è loggato');
+                            calendar.style.display = 'block'; // Mostra il calendario se l'utente è loggato
+                            bottoni.style.display = 'block'; // Mostra i bottoni se l'utente è loggato
+                            messaggio.style.display = 'none'; // Nasconde il messaggio se l'utente è loggato
+                        } else {
+                            console.log('L\'utente non è loggato');
+                            calendar.style.display = 'none'; // Nasconde il calendario se l'utente non è loggato
+                            bottoni.style.display = 'none'; // Nasconde i bottoni se l'utente non è loggato
+                            messaggio.style.display = 'block'; // Mostra il messaggio se l'utente non è loggato
+                        }
+                    }
                 })
                 .catch((error) => {
                     console.error('Error:', error);
