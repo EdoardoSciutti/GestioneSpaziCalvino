@@ -25,10 +25,13 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/login">Accedi</a>
+                            <a class="nav-link active" id="accedi" aria-current="page" style="display: none;" href="/login">Accedi</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/register">Registrati</a>
+                            <a class="nav-link active" id="registrati" aria-current="page" style="display: none;" href="/register">Registrati</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" id="esci" aria-current="page" style="display: none;" href="/">Esci dal Profilo</a>
                         </li>
                     </ul>
                 </div>
@@ -71,6 +74,10 @@
                 var calendar = document.getElementById('calendar');
                 var bottoni = document.getElementById('bottoni');
                 var messaggio = document.getElementById('logga');
+                var esci = document.getElementById('esci');
+                var accedi = document.getElementById('accedi');
+                var registrati = document.getElementById('registrati');
+                document.getElementById('esci').addEventListener('click', logout);
 
                 fetch('http://localhost:3000/api/auth/isLogged', {
                     method: 'GET',
@@ -88,14 +95,20 @@
                         console.log(data);
                         if (data.success) {
                             console.log('L\'utente è loggato');
-                            calendar.style.display = 'block'; // Mostra il calendario se l'utente è loggato
-                            bottoni.style.display = 'block'; // Mostra i bottoni se l'utente è loggato
-                            messaggio.style.display = 'none'; // Nasconde il messaggio se l'utente è loggato
+                            calendar.style.display = 'block';
+                            bottoni.style.display = 'block';
+                            messaggio.style.display = 'none';
+                            esci.style.display = 'block';
+                            accedi.style.display = 'none';
+                            registrati.style.display = 'none';
                         } else {
                             console.log('L\'utente non è loggato');
-                            calendar.style.display = 'none'; // Nasconde il calendario se l'utente non è loggato
-                            bottoni.style.display = 'none'; // Nasconde i bottoni se l'utente non è loggato
-                            messaggio.style.display = 'block'; // Mostra il messaggio se l'utente non è loggato
+                            calendar.style.display = 'none';
+                            bottoni.style.display = 'none';
+                            messaggio.style.display = 'block';
+                            esci.style.display = 'none';
+                            accedi.style.display = 'block';
+                            registrati.style.display = 'block';
                         }
                     }
                 })
@@ -120,6 +133,39 @@
                     generateWeekCalendar(currentSelectedDate);
                 }
             });
+
+            function logout() {
+                fetch('http://localhost:3000/api/auth/logout', {
+                    method: 'GET',
+                    credentials: 'include' // Include cookies in the request
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        return response.json();
+                    }
+                })
+                .then(data => {
+                    if (data) {
+                        console.log(data);
+                        if (data.success) {
+                            console.log('Logout effettuato con successo');
+                            // Aggiorna la pagina o reindirizza l'utente alla pagina di login
+                            window.location.href = '/';
+                        } else {
+                            console.log('Errore durante il logout');
+                            // Mostra un messaggio di errore all'utente
+                            alert('Errore durante il logout. Riprova.');
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    // Mostra un messaggio di errore all'utente
+                    alert('Errore durante il logout. Riprova.');
+                });
+            }
             
             function generateWeekCalendar(selectedDate) {
                 var weekStart = new Date(selectedDate);
