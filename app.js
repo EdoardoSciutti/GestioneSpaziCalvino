@@ -30,13 +30,4 @@ app.get('/login', (req, res) => {
     res.render('../public/views/login.html');
 })
 
-app.get('/isLogged', (req, res) => {
-    // Replace the condition with your own logic to check if the user is logged in
-    if (req.session && req.session.isLoggedIn) {
-        res.json({ success: true });
-    } else {
-        res.json({ success: false });
-    }
-});
-
 app.listen(3000);
