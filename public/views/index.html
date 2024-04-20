@@ -13,6 +13,25 @@
             .datepicker-dropdown {
                 z-index: 1600;
             }
+            /* Change the background color of the datepicker */
+.datepicker {
+    background-color: #f0f0f0;
+}
+
+/* Change the color of the datepicker's date cells */
+.datepicker table tr td.day {
+    color: #333;
+}
+
+/* Change the background color of the selected date */
+.datepicker table tr td.active {
+    background-color: #007bff;
+}
+
+/* Change the color of the arrows */
+.datepicker .prev, .datepicker .next {
+    color: #007bff;
+}
         </style>
     </head>
     <body>
@@ -37,6 +56,27 @@
                 </div>
             </div>
         </nav>
+
+        <div class="modal fade" id="dayModal" tabindex="-1" aria-labelledby="dayModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="dayModalLabel">Dettagli del giorno</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mt-3" id="bottoni" style="display: none;">
+                        <button type="button" class="btn btn-secondary btn-lg me-3">Aggiungi Evento</button>
+                        <button type="button" class="btn btn-secondary btn-lg ms-3">Rimuovi Evento</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         <div class="row">
             <div class="col-md-8 mx-auto">
                 <div class="alert alert-danger mt-5" role="alert" id = "logga" style="display: none;">
@@ -44,22 +84,19 @@
                 </div>
             </div>
         </div>
+        
         <div class="container" id="calendar" style="display: none;">
             <h1 class="mt-5 mb-4">Calendario Settimanale</h1>
             <div class="row">
                 <div class="col-md-2">
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="datepicker" placeholder="Seleziona una data" readonly>
+                        <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                     </div>
                 </div>
             </div>
             <div class="row" id="week-calendar">
             </div>
-        </div>
-
-        <div class="text-center mt-3" id="bottoni" style="display: none;">
-            <button type="button" class="btn btn-secondary btn-lg me-3">Aggiungi Evento</button>
-            <button type="button" class="btn btn-secondary btn-lg ms-3">Rimuovi Evento</button>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -120,7 +157,12 @@
                 $('#datepicker').datepicker({
                     dateFormat: "dd mm yy",
                     autoclose: true,
-                    todayHighlight: true
+                    todayHighlight: true,
+                    orientation: "bottom auto",
+                    templates: {
+                        leftArrow: '<i class="fa fa-chevron-left"></i>',
+                        rightArrow: '<i class="fa fa-chevron-right"></i>'
+                    }
                 }).on('changeDate', function(e) {
                     var selectedDate = $('#datepicker').datepicker('getDate');
                     if (selectedDate !== null) {
@@ -131,6 +173,12 @@
                 if (currentSelectedDate !== null) {
                     generateWeekCalendar(currentSelectedDate);
                 }
+            });
+
+            $(document).on('click', '.card', function() {
+                var day = $(this).find('.card-title').text(); // Ottieni il giorno dal calendario
+                $('#dayModalLabel').text(day); // Imposta il giorno come titolo del modal
+                $('#dayModal').modal('show'); // Mostra il modal
             });
 
             function logout() {
@@ -175,7 +223,7 @@
                 for (var i = 0; i < 7; i++) {
                     var day = new Date(weekStart);
                     day.setDate(weekStart.getDate() + i);
-                    weekHtml += '<div class="col">';
+                    weekHtml += '<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">'; // Aggiunto mb-3 per il margine inferiore
                     weekHtml += '<div class="card">';
                     weekHtml += '<div class="card-body">';
                     weekHtml += '<h5 class="card-title">' + daysOfWeek[i] + ' ' + day.getDate() + '/' + (day.getMonth() + 1) + '/' + day.getFullYear() + '</h5>';
