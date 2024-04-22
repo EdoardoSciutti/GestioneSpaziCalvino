@@ -1,5 +1,10 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./seq.js');
+let cryptoRandomString;
+import('crypto-random-string').then((module) => {
+  cryptoRandomString = module.default;
+});
+const nodemailer = require('nodemailer');
 
 const Rooms = sequelize.define('rooms', {
     room_id: {
@@ -46,6 +51,30 @@ const Users = sequelize.define('users', {
 }, {
   tableName: 'users',
   freezeTableName: true
+});
+
+Users.afterCreate(async (user, options) => {
+  const emailToken = cryptoRandomString({length: 10});
+  Email_verifications.create({
+    token: emailToken,
+    user_Id: user.user_id,
+  });
+
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  });
+
+  // Invia l'email
+  let info = await transporter.sendMail({
+    from: '"No Reply" <no-reply@example.com>',
+    to: user.email,
+    subject: 'Conferma il tuo account',
+    text: `Per favore conferma il tuo account cliccando sul seguente link: http://localhost:3000/api/auth/verifyEmail/${emailToken}`
+  });
 });
 
 const Bookings = sequelize.define('bookings', {
@@ -106,8 +135,8 @@ const Email_verifications = sequelize.define('email_verifications', {
   freezeTableName: true
 });
 
-Email_verifications.belongsTo(Users, { foreignKey: 'user_id' });
-Users.hasOne(Email_verifications, { foreignKey: 'user_id' });
+Users.hasOne(Email_verifications, { foreignKey: 'userId' });
+Email_verifications.belongsTo(Users, { foreignKey: 'userId' });
 
 Users.belongsToMany(Roles, { through: UsersRoles, foreignKey: 'user_id' });
 Roles.belongsToMany(Users, { through: UsersRoles, foreignKey: 'role_id' });

@@ -1,9 +1,5 @@
 //mail di conferma
-const nodemailer = require('nodemailer');
-let cryptoRandomString;
-import('crypto-random-string').then((module) => {
-  cryptoRandomString = module.default;
-});
+
 
 //file con il middleware per il token
 const {authenticateToken} = require('../auth.js')
@@ -55,30 +51,8 @@ router.post('/register', (req, res) => {
           name: name,
           surname: surname
         }
-      }).then(async ([user, created]) => {
+      }).then(([user, created]) => {
         if (created) {
-          //invio mail
-          const emailToken = cryptoRandomString({length: 10});
-          Email_verifications.create({
-            token: emailToken,
-            userId: user.user_id,
-          });
-          let transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-              user: process.env.EMAIL_USERNAME,
-              pass: process.env.EMAIL_PASSWORD
-            }
-          });
-          
-          // Invia l'email
-          let info = await transporter.sendMail({
-            from: '"No Reply" <no-reply@example.com>',
-            to: email,
-            subject: 'Conferma il tuo account',
-            text: `Per favore conferma il tuo account cliccando sul seguente link: http://localhost:3000/api/auth/verifyEmail/${emailToken}`
-          });
-
           const user_for_token = { email: user.email, id: user.user_id };
           const access_token = jwt.sign(user_for_token, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
           const refresh_token = jwt.sign(user_for_token, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
