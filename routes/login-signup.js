@@ -1,11 +1,19 @@
+//mail di conferma
+const nodemailer = require('nodemailer');
+let cryptoRandomString;
+import('crypto-random-string').then((module) => {
+  cryptoRandomString = module.default;
+});
 
+//file con il middleware per il token
 const {authenticateToken} = require('../auth.js')
+
 //di base
 const express = require('express')
 const router = express.Router()
 
 //modelli sql
-const { Users, Rooms, Roles, Bookings, UserRoles } = require('../sequelize/model.js')
+const { Users, Rooms, Roles, Bookings, UserRoles, Email_verifications } = require('../sequelize/model.js')
 
 //.env
 require('dotenv').config();
@@ -47,8 +55,30 @@ router.post('/register', (req, res) => {
           name: name,
           surname: surname
         }
-      }).then(([user, created]) => {
+      }).then(async ([user, created]) => {
         if (created) {
+          //invio mail
+          const emailToken = cryptoRandomString({length: 10});
+          Email_verifications.create({
+            token: emailToken,
+            userId: user.user_id,
+          });
+          let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: process.env.EMAIL_USERNAME,
+              pass: process.env.EMAIL_PASSWORD
+            }
+          });
+          
+          // Invia l'email
+          let info = await transporter.sendMail({
+            from: '"No Reply" <no-reply@example.com>',
+            to: email,
+            subject: 'Conferma il tuo account',
+            text: `Per favore conferma il tuo account cliccando sul seguente link: http://localhost:3000/api/auth/verifyEmail/${emailToken}`
+          });
+
           const user_for_token = { email: user.email, id: user.user_id };
           const access_token = jwt.sign(user_for_token, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
           const refresh_token = jwt.sign(user_for_token, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
@@ -60,6 +90,28 @@ router.post('/register', (req, res) => {
         }
       });
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/verifyEmail/:token', async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    // Trova l'utente associato a questo token
+    const user = await Users.findOne({ where: { emailToken: token } });
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid token' });
+    }
+
+    // Imposta il campo is_verified su true
+    user.is_verified = true;
+    user.emailToken = null; // Puoi anche cancellare il token
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Email verified' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

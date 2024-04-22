@@ -41,7 +41,8 @@ const Users = sequelize.define('users', {
   name: Sequelize.STRING,
   surname: Sequelize.STRING,
   email: Sequelize.STRING,
-  password: Sequelize.STRING
+  password: Sequelize.STRING,
+  is_verified: Sequelize.BOOLEAN
 }, {
   tableName: 'users',
   freezeTableName: true
@@ -91,6 +92,23 @@ const UsersRoles = sequelize.define('users_roles', {
   ]
 });
 
+const Email_verifications = sequelize.define('email_verifications', {
+  email_verification_id: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+  },
+  user_id: Sequelize.INTEGER,
+  token: Sequelize.STRING
+}, {
+  tableName: 'email_verifications',
+  freezeTableName: true
+});
+
+Email_verifications.belongsTo(Users, { foreignKey: 'user_id' });
+Users.hasOne(Email_verifications, { foreignKey: 'user_id' });
+
 Users.belongsToMany(Roles, { through: UsersRoles, foreignKey: 'user_id' });
 Roles.belongsToMany(Users, { through: UsersRoles, foreignKey: 'role_id' });
 
@@ -100,4 +118,4 @@ Users.hasMany(Bookings, { foreignKey: 'user_id' });
 Bookings.belongsTo(Rooms, { foreignKey: 'room_id' });
 Rooms.hasMany(Bookings, { foreignKey: 'room_id' });
 
-module.exports = {Users, Rooms, Roles, Bookings, UsersRoles} 
+module.exports = {Users, Rooms, Roles, Bookings, UsersRoles, Email_verifications} 
