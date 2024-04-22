@@ -1,14 +1,14 @@
 //   +-------------------------------------------------+
 //   |   I require the modules that I'm going to use   |
 //   +-------------------------------------------------+
-
+const Sequelize = require('sequelize');
 const express = require('express')
 const router = express.Router()
 require('dotenv').config();
 const {authenticateToken} = require('../auth.js')
 //modelli sql
 const { Users, Rooms, Roles, Bookings, UserRoles } = require('../sequelize/model.js')
-const { Op } = require('sequelize');
+const { Op, where } = require('sequelize');
 
 //   +--------------------------------------------------+
 //   |   I start to write the code for the web server   |
@@ -89,6 +89,34 @@ router.get('/getBookingsOfRoom/:roomId', authenticateToken, async (req, res) => 
         },
         include: {
             model: Bookings
+        }
+    }).then(rooms => {
+        res.status(200).json(rooms);
+    }).catch(error => {
+        res.status(500).json({ error: error.message });
+        console.log(error);
+    });
+
+});
+
+router.get('/getBookingsOfRoom/:roomId/:day', authenticateToken, async (req, res) => {
+    const {roomId, day} = req.params;
+    console.log(day);
+    Rooms.findAll({
+        where: {
+            room_id: roomId
+        },
+        attributes: ['description'],
+        include: {
+            model: Bookings,
+            where: {
+                date_day: Sequelize.where(Sequelize.fn('date', Sequelize.col('date_day')), '=', day)
+            },
+            attributes: ['start_time', 'end_time', 'description', 'date_day'],
+            include: {
+                model: Users,
+                attributes: ['name', 'surname']
+            }
         }
     }).then(rooms => {
         res.status(200).json(rooms);
