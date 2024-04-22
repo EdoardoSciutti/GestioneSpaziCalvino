@@ -71,20 +71,26 @@ router.post('/register', (req, res) => {
 
 router.get('/verifyEmail/:token', async (req, res) => {
   const { token } = req.params;
-
   try {
-    // Trova l'utente associato a questo token
-    const user = await Users.findOne({ where: { emailToken: token } });
-
-    if (!user) {
+    // Trova la verifica email associata a questo token
+    const emailVerification = await Email_verifications.findOne({ 
+      where: { token: token },
+      include: [{
+        model: Users,
+        required: true
+      }]
+    });
+  
+    if (!emailVerification) {
       return res.status(400).json({ success: false, message: 'Invalid token' });
     }
-
+  
     // Imposta il campo is_verified su true
-    user.is_verified = true;
-    user.emailToken = null; // Puoi anche cancellare il token
-    await user.save();
-
+    emailVerification.user.is_verified = true;
+    emailVerification.destroy();
+    await emailVerification.save();
+    await emailVerification.user.save();
+  
     res.status(200).json({ success: true, message: 'Email verified' });
   } catch (error) {
     res.status(500).json({ error: error.message });

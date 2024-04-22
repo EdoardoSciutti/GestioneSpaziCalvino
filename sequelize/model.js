@@ -54,27 +54,26 @@ const Users = sequelize.define('users', {
 });
 
 Users.afterCreate(async (user, options) => {
-  const emailToken = cryptoRandomString({length: 10});
-  Email_verifications.create({
-    token: emailToken,
-    user_Id: user.user_id,
-  });
-
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD
+  Email_verifications.findOne({ where: { user_id: user.user_id } }).then(async email_verification => {
+    if (email_verification) {
+      let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD
+        }
+      });
+    
+      // Invia l'email
+      let info = await transporter.sendMail({
+        from: '"No Reply" <no-reply@example.com>',
+        to: user.email,
+        subject: 'Conferma il tuo account',
+        text: `Per favore conferma il tuo account cliccando sul seguente link: http://localhost:3000/api/auth/verifyEmail/${email_verification.token}`
+      });
     }
   });
-
-  // Invia l'email
-  let info = await transporter.sendMail({
-    from: '"No Reply" <no-reply@example.com>',
-    to: user.email,
-    subject: 'Conferma il tuo account',
-    text: `Per favore conferma il tuo account cliccando sul seguente link: http://localhost:3000/api/auth/verifyEmail/${emailToken}`
-  });
+ 
 });
 
 const Bookings = sequelize.define('bookings', {
@@ -135,8 +134,8 @@ const Email_verifications = sequelize.define('email_verifications', {
   freezeTableName: true
 });
 
-Users.hasOne(Email_verifications, { foreignKey: 'userId' });
-Email_verifications.belongsTo(Users, { foreignKey: 'userId' });
+Users.hasOne(Email_verifications, { foreignKey: 'user_id' });
+Email_verifications.belongsTo(Users, { foreignKey: 'user_id' });
 
 Users.belongsToMany(Roles, { through: UsersRoles, foreignKey: 'user_id' });
 Roles.belongsToMany(Users, { through: UsersRoles, foreignKey: 'role_id' });
