@@ -58,7 +58,8 @@ const Bookings = sequelize.define('bookings', {
   date_day: Sequelize.DATE,
   start_time: Sequelize.TIME,
   end_time: Sequelize.TIME,
-  user_id: Sequelize.INTEGER
+  user_id: Sequelize.INTEGER,
+  description: Sequelize.STRING
 }, {
   tableName: 'bookings',
   freezeTableName: true
