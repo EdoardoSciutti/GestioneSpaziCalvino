@@ -13,7 +13,6 @@ const dotenv = require('dotenv');
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
-const db = require('./database.js')
 
 //   +-------------------------------------------------+
 //   |   I take the variables store in the file .env   |
@@ -59,6 +58,7 @@ function authenticateToken(req, res, next) {
     });
 }
 
+/*
 passport.use(new GoogleStrategy(
   {
       clientID:     googleClientId,
@@ -80,5 +80,5 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((user, done) => {
   done(null, user);
 });
-
+*/
 module.exports = { authenticateToken};

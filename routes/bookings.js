@@ -87,8 +87,10 @@ router.get('/getBookingsOfRoom/:roomId', authenticateToken, async (req, res) => 
         where: {
             room_id: roomId
         },
+        attributes: ['description'],
         include: {
-            model: Bookings
+            model: Bookings,
+            attributes: ['start_time', 'end_time', 'description', 'date_day'],
         }
     }).then(rooms => {
         res.status(200).json(rooms);
@@ -141,8 +143,11 @@ router.get('/getBookingsOfDay/:day', authenticateToken, async (req, res) => {
     Bookings.findAll({
         where: {
             date_day: day
-        }, include: {
-            model: Rooms
+        },
+        attributes: ['start_time', 'end_time', 'description'],
+        include: {
+            model: Rooms,
+            attributes: ['description']
         }
     }).then(bookings => {
         res.status(200).json(bookings);
@@ -165,7 +170,9 @@ router.get('/getBookingsOfDay', authenticateToken, async (req, res) => {
     Bookings.findAll({
         where: {
             date_day: day
-        }, include: {
+        }, 
+        attributes: ['start_time', 'end_time', 'description'],
+        include: {
             model: Rooms
         }
     }).then(bookings => {
