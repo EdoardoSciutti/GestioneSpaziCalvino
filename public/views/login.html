@@ -96,6 +96,10 @@
                         errorMessage.style.display = 'block';
                         errorMessage.textContent = 'Password errata';
                         password.classList.add('is-invalid');
+                    } else if (error.response && error.response.status === 402) {
+                        errorMessage.style.display = 'block';
+                        errorMessage.textContent = 'Utente non Verificato, vai sulla mail';
+                        password.classList.add('is-invalid');
                     } else {
                         console.log(error);
                     }

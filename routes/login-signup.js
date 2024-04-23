@@ -1,12 +1,16 @@
+//mail di conferma
 
+
+//file con il middleware per il token
 const {authenticateToken} = require('../auth.js')
+
 //di base
 const express = require('express')
 const router = express.Router()
 const passport = require('passport');
 
 //modelli sql
-const { Users, Rooms, Roles, Bookings, UserRoles } = require('../sequelize/model.js')
+const { Users, Rooms, Roles, Bookings, UserRoles, Email_verifications } = require('../sequelize/model.js')
 
 //.env
 require('dotenv').config();
@@ -66,6 +70,35 @@ router.post('/register', (req, res) => {
   }
 });
 
+router.get('/verifyEmail/:token', async (req, res) => {
+  const { token } = req.params;
+  try {
+    // Trova la verifica email associata a questo token
+    const emailVerification = await Email_verifications.findOne({ 
+      where: { token: token },
+      include: [{
+        model: Users,
+        required: true
+      }]
+    });
+  
+    if (!emailVerification) {
+      return res.status(400).json({ success: false, message: 'Invalid token' });
+    }
+  
+    // Imposta il campo is_verified su true
+    emailVerification.user.is_verified = true;
+    emailVerification.destroy();
+    await emailVerification.save();
+    await emailVerification.user.save();
+  
+    res.redirect('/login');
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 /*
     Description: login a user
     Path: http://localhost:3000/api/auth/login
@@ -83,6 +116,8 @@ router.post('/login', (req, res) => {
     .then((user) => {
       if (user == null) {
         res.status(404).json({ success: false, message: 'L\'user non esiste.' });
+      } else if (user.is_verified == false) {
+        res.status(402).json({ success: false, message: 'L\'user non è verificato.' });
       } else {
         console.log(user);
         bcrypt.compare(dati.password, user.password, function(_, result) {

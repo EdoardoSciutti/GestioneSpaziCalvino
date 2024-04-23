@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Apr 15, 2024 alle 12:05
--- Versione del server: 10.1.37-MariaDB
--- Versione PHP: 7.3.0
+-- Creato il: Apr 22, 2024 alle 19:11
+-- Versione del server: 10.4.28-MariaDB
+-- Versione PHP: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,14 +27,23 @@ SET time_zone = "+00:00";
 -- Struttura della tabella `bookings`
 --
 
-CREATE TABLE IF NOT EXISTS `bookings` (
+CREATE TABLE `bookings` (
   `booking_id` int(11) NOT NULL,
   `room_id` int(11) DEFAULT NULL,
   `date_day` date NOT NULL,
   `start_time` time NOT NULL,
   `end_time` time NOT NULL,
-  `user_id` int(11) DEFAULT NULL
+  `user_id` int(11) DEFAULT NULL,
+  `description` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+--
+-- Dump dei dati per la tabella `bookings`
+--
+
+INSERT INTO `bookings` (`booking_id`, `room_id`, `date_day`, `start_time`, `end_time`, `user_id`, `description`) VALUES
+(1, 1, '2024-04-30', '14:20:09', '18:20:09', 19, ''),
+(3, 1, '2024-04-30', '18:20:09', '19:20:09', 19, '');
 
 --
 -- Trigger `bookings`
@@ -60,12 +69,33 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `email_verifications`
+--
+
+CREATE TABLE `email_verifications` (
+  `email_verification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `token` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+--
+-- Dump dei dati per la tabella `email_verifications`
+--
+
+INSERT INTO `email_verifications` (`email_verification_id`, `user_id`, `token`) VALUES
+(6, 26, '489e3b2d-00c7-11ef-ba92-00ff8f43666c'),
+(7, 27, '6709eb05-00c8-11ef-ba92-00ff8f43666c'),
+(10, 29, '1fd10957-00c9-11ef-ba92-00ff8f43666c');
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `roles`
 --
 
-CREATE TABLE IF NOT EXISTS `roles` (
+CREATE TABLE `roles` (
   `role_id` int(11) NOT NULL,
-  `role_name` varchar(20) COLLATE latin1_general_ci NOT NULL
+  `role_name` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -74,9 +104,9 @@ CREATE TABLE IF NOT EXISTS `roles` (
 -- Struttura della tabella `rooms`
 --
 
-CREATE TABLE IF NOT EXISTS `rooms` (
+CREATE TABLE `rooms` (
   `room_id` int(11) NOT NULL,
-  `description` varchar(50) COLLATE latin1_general_ci NOT NULL
+  `description` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -93,21 +123,38 @@ INSERT INTO `rooms` (`room_id`, `description`) VALUES
 -- Struttura della tabella `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
-  `name` varchar(20) COLLATE latin1_general_ci NOT NULL,
-  `surname` varchar(20) COLLATE latin1_general_ci NOT NULL,
-  `email` varchar(50) COLLATE latin1_general_ci NOT NULL,
-  `password` varchar(255) COLLATE latin1_general_ci NOT NULL
+  `name` varchar(20) NOT NULL,
+  `surname` varchar(20) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `is_verified` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
 -- Dump dei dati per la tabella `users`
 --
 
-INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`) VALUES
-(3, '', '', 'ciaone', '$2b$10$Cn4yK53TfGWPlre8fAWvmuVa0VpKO4JJfsB7BLbAN6oy.WrVfHJvu'),
-(4, '', '', 'lol', '$2b$10$WeJdDbk3aCbtmYPbFHV0xuxHfEeKbFIKQIz1DjtZNrjpHRSTEmAiG');
+INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`, `is_verified`) VALUES
+(19, 'Francesco', 'Tacchino', 'tacchifra@gmail.com', '$2b$10$dKmdy77cgv4uCMyx.SZcfOd4bz1qFgruHO/nVLsCtFD5eMVeHO9O6', 0),
+(20, 'marco', 'rossi', 'ciaon@ciao.c', '$2b$10$.eRl.mTR9crX0zeVwzIdROK8l6.FE6SQe.1eG5ZtYDfMkTfVwZFSK', 0),
+(21, 'marco', 'rossi', 'v@ciao.c', '$2b$10$vX3SaCCPo3wJv4CiOWnWSePojU5ZGIW8hJFBj1LjcycFlYPsyD6/q', 0),
+(26, 'marco', 'rossi', 'fo.tacchino.2005@calvino.edu.it', '$2b$10$48HdUaflivpHMIMMypB4deguacPerrbV0acXzTWBSpucHqc5HeGcy', 0),
+(27, 'marco', 'rossi', 'fo.tactrchino.2005@calvino.edu.it', '$2b$10$pkxtWP0ea.ckEKRVWHWhPuwVpH1obdmgTpu2YSVIUkcmMkOCYdC6S', 0),
+(29, 'marco', 'rossi', 'fo.tactfrchino.g2005@calvino.edu.it', '$2b$10$/86KGdIkRyxpM9bHS6/ileSw6ZXmXUqjmnqxG6orbfu.8wGzIru/e', 0),
+(33, 'marco', 'rossi', 'francesco.tacchino.2005@calvino.edu.it', '$2b$10$PD45j0YtJmnF78yBhPZzZu7olxEsXQsjg42pd3vlsITOqDrBthogG', 1);
+
+--
+-- Trigger `users`
+--
+DELIMITER $$
+CREATE TRIGGER `after_user_insert` AFTER INSERT ON `users` FOR EACH ROW BEGIN
+  INSERT INTO email_verifications(user_id, token)
+  VALUES (NEW.user_id, UUID());
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -115,7 +162,7 @@ INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`) VALUES
 -- Struttura della tabella `users_roles`
 --
 
-CREATE TABLE IF NOT EXISTS `users_roles` (
+CREATE TABLE `users_roles` (
   `user_role_id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `role_id` int(11) DEFAULT NULL
@@ -131,6 +178,13 @@ CREATE TABLE IF NOT EXISTS `users_roles` (
 ALTER TABLE `bookings`
   ADD PRIMARY KEY (`booking_id`),
   ADD KEY `room_id` (`room_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indici per le tabelle `email_verifications`
+--
+ALTER TABLE `email_verifications`
+  ADD PRIMARY KEY (`email_verification_id`),
   ADD KEY `user_id` (`user_id`);
 
 --
@@ -156,7 +210,8 @@ ALTER TABLE `users`
 --
 ALTER TABLE `users_roles`
   ADD PRIMARY KEY (`user_role_id`),
-  ADD UNIQUE KEY `user_id` (`user_id`,`role_id`);
+  ADD UNIQUE KEY `user_id` (`user_id`,`role_id`),
+  ADD KEY `role_id` (`role_id`);
 
 --
 -- AUTO_INCREMENT per le tabelle scaricate
@@ -166,7 +221,13 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT per la tabella `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT per la tabella `email_verifications`
+--
+ALTER TABLE `email_verifications`
+  MODIFY `email_verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT per la tabella `roles`
@@ -184,7 +245,7 @@ ALTER TABLE `rooms`
 -- AUTO_INCREMENT per la tabella `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT per la tabella `users_roles`
@@ -202,6 +263,19 @@ ALTER TABLE `users_roles`
 ALTER TABLE `bookings`
   ADD CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`room_id`),
   ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Limiti per la tabella `email_verifications`
+--
+ALTER TABLE `email_verifications`
+  ADD CONSTRAINT `email_verifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Limiti per la tabella `users_roles`
+--
+ALTER TABLE `users_roles`
+  ADD CONSTRAINT `users_roles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `users_roles_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
