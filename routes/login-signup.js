@@ -92,7 +92,7 @@ router.get('/verifyEmail/:token', async (req, res) => {
     await emailVerification.user.save();
   
     res.redirect('/login');
-    
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -116,7 +116,7 @@ router.post('/login', (req, res) => {
       if (user == null) {
         res.status(404).json({ success: false, message: 'L\'user non esiste.' });
       } else if (user.is_verified == false) {
-        res.status(401).json({ success: false, message: 'L\'user non è verificato.' });
+        res.status(402).json({ success: false, message: 'L\'user non è verificato.' });
       } else {
         console.log(user);
         bcrypt.compare(dati.password, user.password, function(_, result) {
