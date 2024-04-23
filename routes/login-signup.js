@@ -157,7 +157,15 @@ router.get('/googleCallback',
 );
 
 router.get('/googleSuccess', (req, res) => {
-    res.status(200).json({ success: true, message: 'User logged with google' });
+  const user_for_token = { email: req.user.email, id: req.user.user_id };
+  const access_token = jwt.sign(user_for_token, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: 86400 // scade in 24 ore
+  });
+  const refresh_token = jwt.sign(user_for_token, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: 86400 * 7 // scade in 7 giorni
+  });
+  res.cookie('access_token', access_token, { httpOnly: true });
+  res.cookie('refresh_token', refresh_token, { httpOnly: true });
 });
 
 router.get('/googleFailure', (req, res) => {
