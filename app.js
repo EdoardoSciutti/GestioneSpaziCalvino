@@ -1,11 +1,21 @@
 const express = require('express');
 const app = express();
-var session = require('express-session')
+const session = require('express-session');
+const passport = require('passport');
 
 //body parser
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 //set di ejs
 app.engine('html', require('ejs').renderFile);
