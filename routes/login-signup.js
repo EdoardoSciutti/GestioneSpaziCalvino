@@ -114,6 +114,8 @@ router.post('/login', (req, res) => {
     .then((user) => {
       if (user == null) {
         res.status(404).json({ success: false, message: 'L\'user non esiste.' });
+      } else if (user.is_verified == false) {
+        res.status(401).json({ success: false, message: 'L\'user non è verificato.' });
       } else {
         console.log(user);
         bcrypt.compare(dati.password, user.password, function(_, result) {
