@@ -41,6 +41,7 @@ const Users = sequelize.define('users', {
   name: Sequelize.STRING,
   surname: Sequelize.STRING,
   email: Sequelize.STRING,
+  google_id: Sequelize.STRING,
   password: Sequelize.STRING
 }, {
   tableName: 'users',

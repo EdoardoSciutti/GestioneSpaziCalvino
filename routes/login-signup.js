@@ -3,6 +3,7 @@ const {authenticateToken} = require('../auth.js')
 //di base
 const express = require('express')
 const router = express.Router()
+const passport = require('passport');
 
 //modelli sql
 const { Users, Rooms, Roles, Bookings, UserRoles } = require('../sequelize/model.js')
@@ -110,7 +111,23 @@ router.post('/login', (req, res) => {
     });
 });
 
+router.get('/googleAuth', passport.authenticate('google', { scope: [ 'email', 'profile' ] }));
 
+router.get('/googleCallback', 
+    passport.authenticate('google', 
+    { 
+        failureRedirect: `http://localhost:3000/api/auth/googleFailure`, 
+        successRedirect: `http://localhost:3000/api/auth/googleSuccess`
+    })
+);
+
+router.get('/googleSuccess', (req, res) => {
+    res.status(200).json({ success: true, message: 'User logged with google' });
+});
+
+router.get('/googleFailure', (req, res) => {
+    res.status(401).json({ success: false, message: 'User not logged with google' });
+});
 
 router.get('/isLogged', authenticateToken, (req, res) => {
   res.status(200).json({ success: true, message: 'User logged' });

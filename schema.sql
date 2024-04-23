@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS users (
     name VARCHAR(20) NOT NULL,
     surname VARCHAR(20) NOT NULL,
     email VARCHAR(50) NOT NULL,
-    password VARCHAR(20) NOT NULL
+    google_id VARCHAR(255),
+    password VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS bookings (

@@ -6,6 +6,7 @@ const passport = require('passport');
 const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const { Users, Rooms, Roles, Bookings, UserRoles } = require('./sequelize/model.js')
 
 //   +-------------------------------------------------+
 //   |   I take the variables store in the file .env   |
@@ -18,8 +19,7 @@ const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 //   |   I take the variables store in the file .env   |
 //   +-------------------------------------------------+
 
-const serverHost = process.env.SERVER_HOST;
-const protocol = process.env.SERVER_PROTOCOL;
+// ...
 
 //   +-------------------------------------------------+
 //   |   We create the functions we are gonna export   |
@@ -58,18 +58,29 @@ function authenticateToken(req, res, next) {
     });
 }
 
-/*
 passport.use(new GoogleStrategy(
   {
       clientID:     googleClientId,
       clientSecret: googleClientSecret,
       //change this path to newest
-      callbackURL: `${protocol}://${serverHost}/api/auth/googleCallback`,
+      callbackURL: `http://localhost:3000/api/auth/googleCallback`,
       passReqToCallback   : true
   },
   //this function is called when the user is successfully authenticated
   (request, accessToken, refreshToken, profile, done) => {
-      // What to do when the user is authenticated
+      Users.findOrCreate({
+          where: {
+              google_id: profile.id
+          },
+          defaults: {
+              name: profile.name.givenName,
+              surname: profile.name.familyName,
+              email: profile.email
+          }
+      }).then(([user, created]) => {
+          console.log(created);
+          return done(null, user);
+      });
   }
 ));
 
@@ -80,5 +91,5 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((user, done) => {
   done(null, user);
 });
-*/
+
 module.exports = { authenticateToken};
