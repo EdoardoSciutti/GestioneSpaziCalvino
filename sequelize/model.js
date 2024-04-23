@@ -69,9 +69,12 @@ Users.afterCreate(async (user, options) => {
         from: '"No Reply" <no-reply@example.com>',
         to: user.email,
         subject: 'Conferma il tuo account',
-        text: `Per favore conferma il tuo account cliccando sul seguente link: http://localhost:3000/api/auth/verifyEmail/${email_verification.token}`
+        html: `
+          <h1>Clicca sul bottone qui sotto per confermare il tuo account:</h1>
+          <a href="http://localhost:3000/api/auth/verifyEmail/${email_verification.token}" style="background-color: #4CAF50; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 12px;">Conferma il tuo account</a>
+        `
       });
-    }
+    };
   });
  
 });
