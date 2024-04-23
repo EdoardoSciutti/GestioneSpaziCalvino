@@ -91,7 +91,8 @@ router.get('/verifyEmail/:token', async (req, res) => {
     await emailVerification.save();
     await emailVerification.user.save();
   
-    res.status(200).json({ success: true, message: 'Email verified' });
+    res.redirect('/login');
+    
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
