@@ -36,7 +36,7 @@ function buttonLogin(event){
         password: password.value
     };
 
-    axios.post('http://localhost:3000/api/auth/login', data)
+    axios.post('https://localhost:3000/api/auth/login', data) // Use HTTPS
     .then((response) => {
         window.location.href = "/";
     },  (error) => {
@@ -52,7 +52,7 @@ function buttonLogin(event){
             errorMessage.textContent = 'Utente non Verificato, vai sulla mail';
             password.classList.add('is-invalid');
         } else {
-            console.log(error);
+            console.error(error); // Use console.error to log errors
         }
     });
 }

@@ -8,11 +8,11 @@ window.onload = function() {
     var esci = document.getElementById('esci');
     var accedi = document.getElementById('accedi');
     var registrati = document.getElementById('registrati');
-    document.getElementById('esci').addEventListener('click', logout);
+    esci.addEventListener('click', logout);
 
     fetch('http://localhost:3000/api/auth/isLogged', {
         method: 'GET',
-        credentials: 'include' // Include cookies in the request
+        credentials: 'include'
     })
     .then(response => {
         if (response.redirected) {
@@ -71,15 +71,15 @@ $(document).ready(function () {
 });
 
 $(document).on('click', '.card', function() {
-    var day = $(this).find('.card-title').text(); // Ottieni il giorno dal calendario
-    $('#dayModalLabel').text(day); // Imposta il giorno come titolo del modal
-    $('#dayModal').modal('show'); // Mostra il modal
+    var day = $(this).find('.card-title').text();
+    $('#dayModalLabel').text(day);
+    $('#dayModal').modal('show');
 });
 
 function logout() {
     fetch('http://localhost:3000/api/auth/logout', {
         method: 'GET',
-        credentials: 'include' // Include cookies in the request
+        credentials: 'include'
     })
     .then(response => {
         if (response.redirected) {
@@ -93,11 +93,9 @@ function logout() {
             console.log(data);
             if (data.success) {
                 console.log('Logout effettuato con successo');
-                // Aggiorna la pagina o reindirizza l'utente alla pagina di login
                 window.location.href = '/';
             } else {
                 console.log('Errore durante il logout');
-                // Mostra un messaggio di errore all'utente
             }
         }
     })
@@ -116,7 +114,7 @@ function generateWeekCalendar(selectedDate) {
     for (var i = 0; i < 7; i++) {
         var day = new Date(weekStart);
         day.setDate(weekStart.getDate() + i);
-        weekHtml += '<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">'; // Aggiunto mb-3 per il margine inferiore
+        weekHtml += '<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">';
         weekHtml += '<div class="card">';
         weekHtml += '<div class="card-body">';
         weekHtml += '<h5 class="card-title">' + daysOfWeek[i] + ' ' + day.getDate() + '/' + (day.getMonth() + 1) + '/' + day.getFullYear() + '</h5>';

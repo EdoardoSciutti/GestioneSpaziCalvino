@@ -68,7 +68,7 @@ function buttonRegistrati(event){
         password: password.value
     };
 
-    axios.post('http://localhost:3000/api/auth/register', data)
+    axios.post('https://localhost:3000/api/auth/register', data) // Use HTTPS
     .then((response) => {
         window.location.href = "/login";
     }, (error) => {
@@ -77,7 +77,7 @@ function buttonRegistrati(event){
             errorMessage.textContent = 'Email già utilizzata';
             email.classList.add('is-invalid');
         } else {
-            console.log(error);
+            console.error(error); // Use console.error to log errors
         }
     });
 }
