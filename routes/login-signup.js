@@ -106,7 +106,6 @@ router.get('/verifyEmail/:token', async (req, res) => {
     Response: a message that confirms the login and a cookie with the access and refresh token
     Requirement: email, password (all in the body)
  */
-
 router.post('/login', (req, res) => {
   const dati = req.body;
   Users.findOne({

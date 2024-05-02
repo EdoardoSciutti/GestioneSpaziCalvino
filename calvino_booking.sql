@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 4.8.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Apr 22, 2024 alle 19:11
--- Versione del server: 10.4.28-MariaDB
--- Versione PHP: 8.2.4
+-- Creato il: Mag 02, 2024 alle 10:24
+-- Versione del server: 10.1.37-MariaDB
+-- Versione PHP: 7.3.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -34,7 +35,7 @@ CREATE TABLE `bookings` (
   `start_time` time NOT NULL,
   `end_time` time NOT NULL,
   `user_id` int(11) DEFAULT NULL,
-  `description` varchar(255) NOT NULL
+  `description` varchar(255) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -75,7 +76,7 @@ DELIMITER ;
 CREATE TABLE `email_verifications` (
   `email_verification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `token` varchar(64) NOT NULL
+  `token` varchar(64) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -83,9 +84,7 @@ CREATE TABLE `email_verifications` (
 --
 
 INSERT INTO `email_verifications` (`email_verification_id`, `user_id`, `token`) VALUES
-(6, 26, '489e3b2d-00c7-11ef-ba92-00ff8f43666c'),
-(7, 27, '6709eb05-00c8-11ef-ba92-00ff8f43666c'),
-(10, 29, '1fd10957-00c9-11ef-ba92-00ff8f43666c');
+(22, 41, 'eed64284-0145-11ef-9040-3c7c3f1265e2');
 
 -- --------------------------------------------------------
 
@@ -95,7 +94,7 @@ INSERT INTO `email_verifications` (`email_verification_id`, `user_id`, `token`) 
 
 CREATE TABLE `roles` (
   `role_id` int(11) NOT NULL,
-  `role_name` varchar(20) NOT NULL
+  `role_name` varchar(20) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -106,7 +105,7 @@ CREATE TABLE `roles` (
 
 CREATE TABLE `rooms` (
   `room_id` int(11) NOT NULL,
-  `description` varchar(50) NOT NULL
+  `description` varchar(50) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -125,25 +124,22 @@ INSERT INTO `rooms` (`room_id`, `description`) VALUES
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
-  `name` varchar(20) NOT NULL,
-  `surname` varchar(20) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `is_verified` tinyint(1) NOT NULL
+  `name` varchar(20) COLLATE latin1_general_ci NOT NULL,
+  `surname` varchar(20) COLLATE latin1_general_ci NOT NULL,
+  `email` varchar(50) COLLATE latin1_general_ci NOT NULL,
+  `password` varchar(255) COLLATE latin1_general_ci NOT NULL,
+  `is_verified` tinyint(1) NOT NULL,
+  `google_id` varchar(255) COLLATE latin1_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
 -- Dump dei dati per la tabella `users`
 --
 
-INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`, `is_verified`) VALUES
-(19, 'Francesco', 'Tacchino', 'tacchifra@gmail.com', '$2b$10$dKmdy77cgv4uCMyx.SZcfOd4bz1qFgruHO/nVLsCtFD5eMVeHO9O6', 0),
-(20, 'marco', 'rossi', 'ciaon@ciao.c', '$2b$10$.eRl.mTR9crX0zeVwzIdROK8l6.FE6SQe.1eG5ZtYDfMkTfVwZFSK', 0),
-(21, 'marco', 'rossi', 'v@ciao.c', '$2b$10$vX3SaCCPo3wJv4CiOWnWSePojU5ZGIW8hJFBj1LjcycFlYPsyD6/q', 0),
-(26, 'marco', 'rossi', 'fo.tacchino.2005@calvino.edu.it', '$2b$10$48HdUaflivpHMIMMypB4deguacPerrbV0acXzTWBSpucHqc5HeGcy', 0),
-(27, 'marco', 'rossi', 'fo.tactrchino.2005@calvino.edu.it', '$2b$10$pkxtWP0ea.ckEKRVWHWhPuwVpH1obdmgTpu2YSVIUkcmMkOCYdC6S', 0),
-(29, 'marco', 'rossi', 'fo.tactfrchino.g2005@calvino.edu.it', '$2b$10$/86KGdIkRyxpM9bHS6/ileSw6ZXmXUqjmnqxG6orbfu.8wGzIru/e', 0),
-(33, 'marco', 'rossi', 'francesco.tacchino.2005@calvino.edu.it', '$2b$10$PD45j0YtJmnF78yBhPZzZu7olxEsXQsjg42pd3vlsITOqDrBthogG', 1);
+INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`, `is_verified`, `google_id`) VALUES
+(19, 'Francesco', 'Tacchino', 'tacchifra@gmail.com', '$2b$10$dKmdy77cgv4uCMyx.SZcfOd4bz1qFgruHO/nVLsCtFD5eMVeHO9O6', 0, NULL),
+(38, 'Simone', 'Secco', 'simoneegesualdi@gmail.com', '$2b$10$w/kcr5mrHzTXJtQKJk5GneUpEFOTHIg5cU8WFts94apED8aQNxV3u', 0, NULL),
+(41, 'Edoardo', 'Sciutti', 'sciutti05@gmail.com', '', 0, '115158662982403594320');
 
 --
 -- Trigger `users`
@@ -227,7 +223,7 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT per la tabella `email_verifications`
 --
 ALTER TABLE `email_verifications`
-  MODIFY `email_verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `email_verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT per la tabella `roles`
@@ -245,7 +241,7 @@ ALTER TABLE `rooms`
 -- AUTO_INCREMENT per la tabella `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT per la tabella `users_roles`
