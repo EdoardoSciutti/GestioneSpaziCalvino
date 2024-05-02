@@ -36,7 +36,7 @@ function buttonLogin(event){
         password: password.value
     };
 
-    axios.post('https://localhost:3000/api/auth/login', data) // Use HTTPS
+    axios.post('http://localhost:3000/api/auth/login', data)
     .then((response) => {
         window.location.href = "/";
     },  (error) => {

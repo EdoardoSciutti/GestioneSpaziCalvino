@@ -41,6 +41,10 @@ app.get('/login', (req, res) => {
     res.render('../public/views/login.html');
 })
 
+app.get('/authSuccess', (req, res) => {
+    res.render('../public/views/authSuccess.html');
+})
+
 app.use('/styles', express.static(__dirname + '/public/styles'));
 app.use('/scripts', express.static(__dirname + '/public/scripts'));
 
