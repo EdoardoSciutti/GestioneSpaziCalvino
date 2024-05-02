@@ -68,7 +68,7 @@ function buttonRegistrati(event){
         password: password.value
     };
 
-    axios.post('https://localhost:3000/api/auth/register', data) // Use HTTPS
+    axios.post('http://localhost:3000/api/auth/register', data) // Use HTTPS
     .then((response) => {
         window.location.href = "/login";
     }, (error) => {
