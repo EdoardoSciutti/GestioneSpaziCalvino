@@ -4,6 +4,7 @@ window.onload = function() {
     var esci = document.getElementById('esci');
     var accedi = document.getElementById('accedi');
     var registrati = document.getElementById('registrati');
+    var bookingTable = document.getElementById('bookingTableContainer');
     esci.addEventListener('click', logout);
 
     fetch('http://localhost:3000/api/auth/isLogged', {
@@ -20,12 +21,14 @@ window.onload = function() {
     .then(data => {
         if (data) {
             if (data.success) {
+                bookingTableContainer.style.display = 'block';
                 tutto.style.display = 'block';
                 messaggio.style.display = 'none';
                 esci.style.display = 'block';
                 accedi.style.display = 'none';
                 registrati.style.display = 'none';
             } else {
+                bookingTableContainer.style.display = 'none';
                 tutto.style.display = 'none';
                 messaggio.style.display = 'block';
                 esci.style.display = 'none';
@@ -84,7 +87,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     $(datePicker).on('changeDate', function(e) {
+        const tableBody = document.getElementById('bookingTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = '';
+
         document.getElementById('results').innerHTML = '';
+
         for (let roomId = 1; roomId <= 8; roomId++) {
             fetchBookings(roomId, e.format('yyyy-mm-dd'));
         }
@@ -104,41 +111,78 @@ function fetchBookings(roomId, date) {
 }
 
 function displayResults(data, roomId) {
-    const resultsDiv = document.getElementById('results');  
-    let rowDiv;
-    if (roomId % 3 === 1) {
-        rowDiv = document.createElement('div');
-        rowDiv.className = 'row';
-        resultsDiv.appendChild(rowDiv);
-    } else {
-        rowDiv = resultsDiv.lastElementChild;
+    const resultsDiv = document.getElementById('results');
+    const tableBody = document.getElementById('bookingTable').getElementsByTagName('tbody')[0];
+
+    let row = document.getElementById(`room-row-${roomId}`);
+    if (!row) {
+        row = document.createElement('tr');
+        row.id = `room-row-${roomId}`;
+        let roomCell = document.createElement('td');
+        roomCell.textContent = `Stanza ${roomId}`;
+        row.appendChild(roomCell);
+        for (let hour = 7; hour <= 15; hour++) {
+            let cell = document.createElement('td');
+            cell.id = `room-${roomId}-hour-${hour}`;
+            row.appendChild(cell);
+        }
+        tableBody.appendChild(row);
     }
+
+    for (let hour = 7; hour <= 15; hour++) {
+        let cell = document.getElementById(`room-${roomId}-hour-${hour}`);
+        cell.innerHTML = '';
+        cell.removeAttribute('colspan');
+        cell.style.display = '';
+    }
+
+    let bookingRow = document.createElement('div');
+    bookingRow.className = 'row';
+    resultsDiv.appendChild(bookingRow);
 
     if (data && data.length > 0) {
         data.forEach(room => {
-            if (room && room.bookings && room.bookings.length > 0) {
-                const colDiv = document.createElement('div');
-                colDiv.className = 'col-md-4';
-                const roomDesc = document.createElement('h3');
-                roomDesc.textContent = `Stanza ${roomId}: ${room.description}`;
-                colDiv.appendChild(roomDesc);
+            room.bookings.forEach(booking => {
+                const bookingColor = getRandomColor();
+                const startHour = parseInt(formatTime(booking.start_time).substring(0, 2));
+                const endHour = parseInt(formatTime(booking.end_time).substring(0, 2));
+                const duration = endHour - startHour;
 
-                room.bookings.forEach(booking => {
-                    const bookingDetails = document.createElement('p');
-                    bookingDetails.innerHTML = `
-                        <strong>Ora d'inizio:</strong> ${formatTime(booking.start_time)}<br>
-                        <strong>Ora di fine:</strong> ${formatTime(booking.end_time)}<br>
-                        <strong>Prenotato da:</strong> ${booking.user.name} ${booking.user.surname}<br>
-                        <strong>Descrizione:</strong> ${booking.description || "Nessuna descrizione fornita"}
-                    `;
-                    colDiv.appendChild(bookingDetails);
-                });
-                rowDiv.appendChild(colDiv);
-            }
+                let startCell = document.getElementById(`room-${roomId}-hour-${startHour}`);
+                if (duration > 1) {
+                    startCell.setAttribute('colspan', duration);
+                    startCell.style.backgroundColor = bookingColor;
+                    startCell.textContent = `${booking.user.name} ${booking.user.surname}`;
+
+                    for (let hour = startHour + 1; hour < endHour; hour++) {
+                        let cell = document.getElementById(`room-${roomId}-hour-${hour}`);
+                        cell.style.display = 'none';
+                    }
+                } else {
+                    startCell.style.backgroundColor = bookingColor;
+                    startCell.textContent = `${booking.user.name} ${booking.user.surname}`;
+                }
+
+                let bookingDetails = document.createElement('div');
+                bookingDetails.className = 'col-md-4';
+                bookingDetails.innerHTML = `
+                    <h4>${room.description}</h4>
+                    <p><strong>Ora d'inizio:</strong> ${formatTime(booking.start_time)}<br>
+                    <strong>Ora di fine:</strong> ${formatTime(booking.end_time)}<br>
+                    <strong>Prenotato da:</strong> ${booking.user.name} ${booking.user.surname}<br>
+                    <strong>Descrizione:</strong> ${booking.description || "Nessuna descrizione fornita"}</p>
+                `;
+                bookingRow.appendChild(bookingDetails);
+            });
         });
     }
 }
 
 function formatTime(timeStr) {
     return timeStr.substring(0, 5);
+}
+
+function getRandomColor() {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 100%, 75%)`;
 }
