@@ -5,3 +5,8 @@ body {
 #results {
     margin-top: 20px;
 }
+
+#date{
+    background-color: transparent;
+    text-align: center;
+}

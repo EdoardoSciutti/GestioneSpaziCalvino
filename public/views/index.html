@@ -43,21 +43,17 @@
             </div>
         </div>
 
-        <div class="container" id = "tutto">
+        <div class="container" id="tutto">
             <h1 class="mt-5">Prenotazioni Italo Calvino</h1>
             <form id="bookingForm" class="mb-3">
-                <div class="form-group">
-                    <label for="roomId">Stanza:</label>
-                    <input type="number" class="form-control" id="roomId" required>
-                </div>
                 <div class="form-group">
                     <label for="date">Data:</label>
                     <input type="text" class="form-control datepicker" id="date" readonly>
                 </div>                
-                <button type="submit" class="btn btn-primary">Esegui</button>
+                <button type="submit" class="btn btn-primary" style="display: none;">Esegui</button>
             </form>
             <div id="results"></div>
-        </div>
+        </div>        
     
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>       
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
