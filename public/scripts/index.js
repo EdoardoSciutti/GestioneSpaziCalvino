@@ -1,9 +1,5 @@
 window.onload = function() {
-    $('#datepicker').datepicker('setDate', new Date());
-    generateWeekCalendar(new Date());
-
-    var calendar = document.getElementById('calendar');
-    var bottoni = document.getElementById('bottoni');
+    var tutto = document.getElementById('tutto');
     var messaggio = document.getElementById('logga');
     var esci = document.getElementById('esci');
     var accedi = document.getElementById('accedi');
@@ -26,16 +22,14 @@ window.onload = function() {
             console.log(data);
             if (data.success) {
                 console.log('L\'utente è loggato');
-                calendar.style.display = 'block';
-                bottoni.style.display = 'block';
+                tutto.style.display = 'block';
                 messaggio.style.display = 'none';
                 esci.style.display = 'block';
                 accedi.style.display = 'none';
                 registrati.style.display = 'none';
             } else {
                 console.log('L\'utente non è loggato');
-                calendar.style.display = 'none';
-                bottoni.style.display = 'none';
+                tutto.style.display = 'none';
                 messaggio.style.display = 'block';
                 esci.style.display = 'none';
                 accedi.style.display = 'block';
@@ -48,33 +42,17 @@ window.onload = function() {
     });
 }
 
-$(document).ready(function () {
-    $('#datepicker').datepicker({
-        dateFormat: "dd mm yy",
-        autoclose: true,
-        todayHighlight: true,
-        orientation: "bottom auto",
-        templates: {
-            leftArrow: '<i class="fa fa-chevron-left"></i>',
-            rightArrow: '<i class="fa fa-chevron-right"></i>'
-        }
-    }).on('changeDate', function(e) {
-        var selectedDate = $('#datepicker').datepicker('getDate');
-        if (selectedDate !== null) {
-            generateWeekCalendar(selectedDate);
-        }
-    });
-    var currentSelectedDate = $('#datepicker').datepicker('getDate');
-    if (currentSelectedDate !== null) {
-        generateWeekCalendar(currentSelectedDate);
-    }
-});
+ const today = new Date();
+ const dateStr = today.toISOString().substring(0, 10);  // Converte la data odierna in stringa formato 'YYYY-MM-DD'
 
-$(document).on('click', '.card', function() {
-    var day = $(this).find('.card-title').text();
-    $('#dayModalLabel').text(day);
-    $('#dayModal').modal('show');
-});
+ $('#date').val(dateStr);  // Imposta il valore del campo di input
+
+ // Inizializza il datepicker
+ $('.datepicker').datepicker({
+     format: 'yyyy-mm-dd',   // Imposta il formato della data
+     autoclose: true,        // Chiude il datepicker quando una data è stata scelta
+     todayHighlight: true,   // Evidenzia la data odierna
+ });
 
 function logout() {
     fetch('http://localhost:3000/api/auth/logout', {
@@ -104,21 +82,59 @@ function logout() {
     });
 }
 
-function generateWeekCalendar(selectedDate) {
-    var weekStart = new Date(selectedDate);
-    var currentDayOfWeek = selectedDate.getDay();
-    var offset = (currentDayOfWeek === 0) ? 6 : currentDayOfWeek - 1;
-    weekStart.setDate(selectedDate.getDate() - offset);
-    var daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-    var weekHtml = '';
-    for (var i = 0; i < 7; i++) {
-        var day = new Date(weekStart);
-        day.setDate(weekStart.getDate() + i);
-        weekHtml += '<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">';
-        weekHtml += '<div class="card">';
-        weekHtml += '<div class="card-body">';
-        weekHtml += '<h5 class="card-title">' + daysOfWeek[i] + ' ' + day.getDate() + '/' + (day.getMonth() + 1) + '/' + day.getFullYear() + '</h5>';
-        weekHtml += '</div></div></div>';
+document.getElementById('bookingForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const roomId = document.getElementById('roomId').value;
+    const date = document.getElementById('date').value;
+    
+    fetch(`http://localhost:3000/api/bookings/getBookingsOfRoom/${roomId}/${date}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => displayResults(data))
+        .catch(error => console.error('There was a problem with your fetch operation:', error));
+});
+
+function displayResults(data) {
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = ''; // Clear previous results
+    
+    // Stampa per debug
+    console.log(data);
+
+    // Aggiungi un controllo per assicurarti che data sia definito e non vuoto
+    if (!data || data.length === 0) {
+        resultsDiv.innerHTML = '<p>Nessuna prenotazione per questa data</p>';
+        return;
     }
-    $('#week-calendar').html(weekHtml);
+
+    // Processa ogni stanza nell'array di stanze
+    data.forEach(room => {
+        if (room && room.bookings && room.bookings.length > 0) {
+            const roomDesc = document.createElement('h3');
+            roomDesc.textContent = `Room Description: ${room.description}`;
+            resultsDiv.appendChild(roomDesc);
+
+            // Itera su ogni prenotazione nella stanza
+            room.bookings.forEach(booking => {
+                const bookingDetails = document.createElement('p');
+                bookingDetails.innerHTML = `
+                    <strong>Ora di inizio - fine:</strong> ${formatTime(booking.start_time)} to ${formatTime(booking.end_time)}<br>
+                    <strong>Prenotato da:</strong> ${booking.user.name} ${booking.user.surname}
+                `;
+                resultsDiv.appendChild(bookingDetails);
+            });
+        } else {
+            resultsDiv.innerHTML += '<p>No bookings found for this room on this date.</p>';
+        }
+    });
+}
+
+function formatTime(timeStr) {
+    // Assuming timeStr is in 'HH:mm:ss' format
+    return timeStr.substring(0, 5); // This trims off seconds for better readability
 }

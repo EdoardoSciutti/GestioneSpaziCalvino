@@ -2,22 +2,6 @@ body {
     overflow-x: hidden;
 }
 
-.datepicker-dropdown {
-    z-index: 1600;
-}
-
-.datepicker {
-    background-color: #f0f0f0;
-}
-
-.datepicker table tr td.day {
-    color: #333;
-}
-
-.datepicker table tr td.active {
-    background-color: #007bff;
-}
-
-.datepicker .prev, .datepicker .next {
-    color: #007bff;
+#results {
+    margin-top: 20px;
 }
