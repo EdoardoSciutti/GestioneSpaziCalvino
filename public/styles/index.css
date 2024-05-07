@@ -2,22 +2,42 @@ body {
     overflow-x: hidden;
 }
 
-.datepicker-dropdown {
-    z-index: 1600;
+#results {
+    margin-top: 20px;
 }
 
-.datepicker {
-    background-color: #f0f0f0;
+#date{
+    background-color: transparent;
+    text-align: center;
 }
 
-.datepicker table tr td.day {
-    color: #333;
+#bookingTableContainer {
+    margin-top: 20px;
 }
 
-.datepicker table tr td.active {
-    background-color: #007bff;
+#bookingTable {
+    width: 100%;
+    text-align: center;
 }
 
-.datepicker .prev, .datepicker .next {
-    color: #007bff;
+#bookingTable th, #bookingTable td {
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+#results{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+#results > * {
+    flex: 1 1 30%; /* Ogni elemento prenderà il 30% della larghezza della riga, quindi ci saranno al massimo 3 elementi per riga */
 }
