@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.4
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 02, 2024 alle 10:24
+-- Creato il: Mag 07, 2024 alle 09:49
 -- Versione del server: 10.1.37-MariaDB
 -- Versione PHP: 7.3.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -37,14 +36,6 @@ CREATE TABLE `bookings` (
   `user_id` int(11) DEFAULT NULL,
   `description` varchar(255) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
-
---
--- Dump dei dati per la tabella `bookings`
---
-
-INSERT INTO `bookings` (`booking_id`, `room_id`, `date_day`, `start_time`, `end_time`, `user_id`, `description`) VALUES
-(1, 1, '2024-04-30', '14:20:09', '18:20:09', 19, ''),
-(3, 1, '2024-04-30', '18:20:09', '19:20:09', 19, '');
 
 --
 -- Trigger `bookings`
@@ -79,13 +70,6 @@ CREATE TABLE `email_verifications` (
   `token` varchar(64) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
---
--- Dump dei dati per la tabella `email_verifications`
---
-
-INSERT INTO `email_verifications` (`email_verification_id`, `user_id`, `token`) VALUES
-(22, 41, 'eed64284-0145-11ef-9040-3c7c3f1265e2');
-
 -- --------------------------------------------------------
 
 --
@@ -97,6 +81,15 @@ CREATE TABLE `roles` (
   `role_name` varchar(20) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
+--
+-- Dump dei dati per la tabella `roles`
+--
+
+INSERT INTO `roles` (`role_id`, `role_name`) VALUES
+(1, 'admin'),
+(2, 'user'),
+(3, 'viewer');
+
 -- --------------------------------------------------------
 
 --
@@ -105,16 +98,21 @@ CREATE TABLE `roles` (
 
 CREATE TABLE `rooms` (
   `room_id` int(11) NOT NULL,
-  `description` varchar(50) COLLATE latin1_general_ci NOT NULL
+  `description` varchar(50) COLLATE latin1_general_ci NOT NULL,
+  `postazioni` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
 -- Dump dei dati per la tabella `rooms`
 --
 
-INSERT INTO `rooms` (`room_id`, `description`) VALUES
-(1, 'agorà'),
-(2, 'info_1');
+INSERT INTO `rooms` (`room_id`, `description`, `postazioni`) VALUES
+(4, 'Info 1', 22),
+(5, 'Info 2', 25),
+(6, 'Info 3', 26),
+(7, 'Ele 1', 12),
+(8, 'Ele 2', 12),
+(9, 'Cad 1', 12);
 
 -- --------------------------------------------------------
 
@@ -137,9 +135,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`, `is_verified`, `google_id`) VALUES
-(19, 'Francesco', 'Tacchino', 'tacchifra@gmail.com', '$2b$10$dKmdy77cgv4uCMyx.SZcfOd4bz1qFgruHO/nVLsCtFD5eMVeHO9O6', 0, NULL),
-(38, 'Simone', 'Secco', 'simoneegesualdi@gmail.com', '$2b$10$w/kcr5mrHzTXJtQKJk5GneUpEFOTHIg5cU8WFts94apED8aQNxV3u', 0, NULL),
-(41, 'Edoardo', 'Sciutti', 'sciutti05@gmail.com', '', 0, '115158662982403594320');
+(49, 'fra', 'tacchino', 'francesco.tacchino.2005@calvino.edu.it', '$2b$10$164Q4iLGqVKMp3tSvVLkf.PUKaRkL5fU.VycYPR0oVOlwx0H9hMaa', 1, NULL);
 
 --
 -- Trigger `users`
@@ -148,6 +144,7 @@ DELIMITER $$
 CREATE TRIGGER `after_user_insert` AFTER INSERT ON `users` FOR EACH ROW BEGIN
   INSERT INTO email_verifications(user_id, token)
   VALUES (NEW.user_id, UUID());
+  INSERT INTO users_roles(user_id, role_id) VALUES (NEW.user_id, 2);
 END
 $$
 DELIMITER ;
@@ -163,6 +160,13 @@ CREATE TABLE `users_roles` (
   `user_id` int(11) DEFAULT NULL,
   `role_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+--
+-- Dump dei dati per la tabella `users_roles`
+--
+
+INSERT INTO `users_roles` (`user_role_id`, `user_id`, `role_id`) VALUES
+(1, 49, 2);
 
 --
 -- Indici per le tabelle scaricate
@@ -217,37 +221,37 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT per la tabella `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `email_verifications`
 --
 ALTER TABLE `email_verifications`
-  MODIFY `email_verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `email_verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT per la tabella `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT per la tabella `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT per la tabella `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT per la tabella `users_roles`
 --
 ALTER TABLE `users_roles`
-  MODIFY `user_role_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Limiti per le tabelle scaricate
