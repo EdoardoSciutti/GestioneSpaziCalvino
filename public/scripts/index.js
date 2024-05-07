@@ -113,17 +113,23 @@ function fetchBookings(roomId, date) {
 function displayResults(data, roomId) {
     const resultsDiv = document.getElementById('results');
     const tableBody = document.getElementById('bookingTable').getElementsByTagName('tbody')[0];
+    console.log(data);
+
+    let nomiStanze = ["Agorà", "Aula Magna", "Info 1", "Info 2", "Info 3", "Ele 1", "Ele 2", "Cad 1"]
 
     let row = document.getElementById(`room-row-${roomId}`);
     if (!row) {
         row = document.createElement('tr');
         row.id = `room-row-${roomId}`;
         let roomCell = document.createElement('td');
-        roomCell.textContent = `Stanza ${roomId}`;
+        roomCell.textContent = `${nomiStanze[roomId-1]}`;
+        roomCell.style.textAlign = 'left';
+        console.log(nomiStanze[roomId]);
         row.appendChild(roomCell);
         for (let hour = 7; hour <= 15; hour++) {
             let cell = document.createElement('td');
             cell.id = `room-${roomId}-hour-${hour}`;
+            cell.textContent = hour;
             row.appendChild(cell);
         }
         tableBody.appendChild(row);

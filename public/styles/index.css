@@ -9,6 +9,7 @@ body {
 #date{
     background-color: transparent;
     text-align: center;
+    font-size: 20px;
 }
 
 #bookingTableContainer {
