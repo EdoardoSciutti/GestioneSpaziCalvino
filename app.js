@@ -45,6 +45,14 @@ app.get('/authSuccess', (req, res) => {
     res.render('../public/views/authSuccess.html');
 })
 
+app.get('/createBooking', (req, res) => {
+    res.render('../public/views/createBooking.html');
+})
+
+app.get('/deleteBooking', (req, res) => {
+    res.render('../public/views/deleteBooking.html');
+})
+
 app.use('/styles', express.static(__dirname + '/public/styles'));
 app.use('/scripts', express.static(__dirname + '/public/scripts'));
 

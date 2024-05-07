@@ -4,7 +4,6 @@ window.onload = function() {
     var esci = document.getElementById('esci');
     var accedi = document.getElementById('accedi');
     var registrati = document.getElementById('registrati');
-    var bookingTable = document.getElementById('bookingTableContainer');
     esci.addEventListener('click', logout);
 
     fetch('http://localhost:3000/api/auth/isLogged', {
@@ -69,7 +68,7 @@ function logout() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const datePicker = document.getElementById('date');
+    const datePicker = document.getElementById('inputDate');
     const today = new Date();
     const formattedToday = today.toISOString().slice(0, 10);
 
