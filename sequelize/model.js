@@ -39,7 +39,6 @@ const Roles = sequelize.define('roles', {
 const Users = sequelize.define('users', {
   user_id: {
       type: Sequelize.INTEGER,
-      allowNull: false,
       primaryKey: true,
       autoIncrement: true,
   },
