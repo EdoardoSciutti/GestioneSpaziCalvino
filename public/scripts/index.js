@@ -136,10 +136,6 @@ function displayResults(data, roomId) {
         cell.style.display = '';
     }
 
-    let bookingRow = document.createElement('div');
-    bookingRow.className = 'row';
-    resultsDiv.appendChild(bookingRow);
-
     if (data && data.length > 0) {
         data.forEach(room => {
             room.bookings.forEach(booking => {
@@ -172,7 +168,7 @@ function displayResults(data, roomId) {
                     <strong>Prenotato da:</strong> ${booking.user.name} ${booking.user.surname}<br>
                     <strong>Descrizione:</strong> ${booking.description || "Nessuna descrizione fornita"}</p>
                 `;
-                bookingRow.appendChild(bookingDetails);
+                resultsDiv.appendChild(bookingDetails);
             });
         });
     }
