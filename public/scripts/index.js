@@ -4,6 +4,8 @@ window.onload = function() {
     var esci = document.getElementById('esci');
     var accedi = document.getElementById('accedi');
     var registrati = document.getElementById('registrati');
+    var nuovo = document.getElementById('createBooking');
+    var elimina = document.getElementById('deleteBooking');
     esci.addEventListener('click', logout);
 
     fetch('http://localhost:3000/api/auth/isLogged', {
@@ -26,6 +28,8 @@ window.onload = function() {
                 esci.style.display = 'block';
                 accedi.style.display = 'none';
                 registrati.style.display = 'none';
+                nuovo.style.display = 'block';
+                elimina.style.display = 'block';
             } else {
                 bookingTableContainer.style.display = 'none';
                 tutto.style.display = 'none';
@@ -33,6 +37,8 @@ window.onload = function() {
                 esci.style.display = 'none';
                 accedi.style.display = 'block';
                 registrati.style.display = 'block';
+                nuovo.style.display = 'none';
+                elimina.style.display = 'none';
             }
         }
     })
@@ -70,29 +76,21 @@ function logout() {
 document.addEventListener('DOMContentLoaded', function() {
     const datePicker = document.getElementById('inputDate');
     const today = new Date();
-    const formattedToday = today.toISOString().slice(0, 10);
-
-    $(datePicker).datepicker({
-        format: 'yyyy-mm-dd',
-        autoclose: true,
-        todayHighlight: true,
-    });
-
-    $(datePicker).datepicker('setDate', today);
+    datePicker.value = today.toISOString().slice(0,10);
 
     document.getElementById('results').innerHTML = '';
     for (let roomId = 1; roomId <= 8; roomId++) {
-        fetchBookings(roomId, formattedToday);
+        fetchBookings(roomId, datePicker.value);
     }
 
-    $(datePicker).on('changeDate', function(e) {
+    datePicker.addEventListener('change', function(e) {
         const tableBody = document.getElementById('bookingTable').getElementsByTagName('tbody')[0];
         tableBody.innerHTML = '';
 
         document.getElementById('results').innerHTML = '';
 
         for (let roomId = 1; roomId <= 8; roomId++) {
-            fetchBookings(roomId, e.format('yyyy-mm-dd'));
+            fetchBookings(roomId, e.target.value);
         }
     });
 });

@@ -125,7 +125,7 @@ CREATE TABLE `users` (
   `name` varchar(20) COLLATE latin1_general_ci NOT NULL,
   `surname` varchar(20) COLLATE latin1_general_ci NOT NULL,
   `email` varchar(50) COLLATE latin1_general_ci NOT NULL,
-  `password` varchar(255) COLLATE latin1_general_ci NOT NULL,
+  `password` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
   `is_verified` tinyint(1) NOT NULL,
   `google_id` varchar(255) COLLATE latin1_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
