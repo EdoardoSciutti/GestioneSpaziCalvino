@@ -7,7 +7,7 @@ const router = express.Router()
 require('dotenv').config();
 const {authenticateToken} = require('../auth.js')
 //modelli sql
-const { Users, Rooms, Roles, Bookings, UserRoles } = require('../sequelize/model.js')
+const { Users, Rooms, Roles, Bookings, UsersRoles } = require('../sequelize/model.js')
 const { Op, where } = require('sequelize');
 
 //   +--------------------------------------------------+
@@ -22,7 +22,7 @@ const { Op, where } = require('sequelize');
     Requirement: authentication token
  */
 router.post('/booksRoom', authenticateToken, async (req, res) => {
-    const { room, date, start_time, end_time } = req.body
+    const { room, date, start_time, end_time, description } = req.body
     const user_id = req.user.id
     if (!room || !date || !start_time || !end_time) 
         return res.status(400).json({ error: 'Missing room or date' });
@@ -57,7 +57,8 @@ router.post('/booksRoom', authenticateToken, async (req, res) => {
                 end_time: end_time
             },
             defaults: {
-                user_id: user_id
+                user_id: user_id,
+                description: description
             }
         });
 
@@ -75,23 +76,26 @@ router.post('/booksRoom', authenticateToken, async (req, res) => {
 router.post('/deleteBooking', authenticateToken, async (req, res) => {
     const {date_day, start_time, end_time, room_id} = req.body;
     const user_id = req.user.id;
+    console.log(req.body);
     Bookings.findOne({
         where: {
-            date_day: date_day,
+            date_day: new Date(date_day),
             start_time: start_time,
             end_time: end_time,
             room_id: room_id,
         }
     }).then(booking => {
+        console.log(booking);
         if (booking && booking.user_id == user_id) {
             booking.destroy();
             res.status(200).json({ success: true, message: 'Booking deleted' });
         } else if(booking && booking.user_id != user_id){
-            UserRoles.findAll({
+            UsersRoles.findAll({
                 where: {
                     user_id: user_id
                 }
             }).then(userRoles => {
+                console.log(userRoles + ' ciao');
                 if (userRoles.some(userRole => userRole.role_id == 1)) {
                     booking.destroy();
                     res.status(200).json({ success: true, message: 'Booking deleted' });
@@ -100,7 +104,7 @@ router.post('/deleteBooking', authenticateToken, async (req, res) => {
                 }
             });
         } 
-        else {
+        else if(!booking){
             res.status(400).json({ success: false, message: 'Booking not found' });
         }
     }).catch(error => {
