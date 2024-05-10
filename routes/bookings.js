@@ -87,12 +87,12 @@ router.post('/deleteBooking', authenticateToken, async (req, res) => {
             booking.destroy();
             res.status(200).json({ success: true, message: 'Booking deleted' });
         } else if(booking && booking.user_id != user_id){
-            UserRoles.findOne({
+            UserRoles.findAll({
                 where: {
                     user_id: user_id
                 }
-            }).then(userRole => {
-                if (userRole.role_id == 1) {
+            }).then(userRoles => {
+                if (userRoles.some(userRole => userRole.role_id == 1)) {
                     booking.destroy();
                     res.status(200).json({ success: true, message: 'Booking deleted' });
                 } else {
