@@ -72,6 +72,41 @@ router.post('/booksRoom', authenticateToken, async (req, res) => {
     }
 });
 
+router.post('/deleteBooking', authenticateToken, async (req, res) => {
+    const {date_day, start_time, end_time, room_id} = req.body;
+    const user_id = req.user.id;
+    Bookings.findOne({
+        where: {
+            date_day: date_day,
+            start_time: start_time,
+            end_time: end_time,
+            room_id: room_id,
+        }
+    }).then(booking => {
+        if (booking && booking.user_id == user_id) {
+            booking.destroy();
+            res.status(200).json({ success: true, message: 'Booking deleted' });
+        } else if(booking && booking.user_id != user_id){
+            UserRoles.findAll({
+                where: {
+                    user_id: user_id
+                }
+            }).then(userRoles => {
+                if (userRoles.some(userRole => userRole.role_id == 1)) {
+                    booking.destroy();
+                    res.status(200).json({ success: true, message: 'Booking deleted' });
+                } else {
+                    res.status(400).json({ success: false, message: 'You are not authorized to delete this booking' });
+                }
+            });
+        } 
+        else {
+            res.status(400).json({ success: false, message: 'Booking not found' });
+        }
+    }).catch(error => {
+        res.status(500).json({ error: error.message });
+    });
+});
 /*
     Description: get all the bookings of a specific room
     Path: http://localhost:3000/api/bookings/getBookingsOfRoom/:roomId
