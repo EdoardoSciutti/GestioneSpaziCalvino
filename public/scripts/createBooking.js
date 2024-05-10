@@ -13,6 +13,7 @@ function buttonLogin(event){
     let beginTime = document.getElementById('inputTime1').value;
     let endTime = document.getElementById('inputTime2').value;
     let date = document.getElementById('inputDate').value;
+    let description = document.getElementById('inputDescription').value;
 
     let beginTimeDate = new Date(`1970-01-01T${beginTime}:00`);
     let endTimeDate = new Date(`1970-01-01T${endTime}:00`);
@@ -35,11 +36,11 @@ function buttonLogin(event){
         errorMessageElement.innerHTML = errors.join('<br>');
     } else {
         errorMessageElement.style.display = 'none';
-        invioDati(roomId, beginTime, endTime, date)
+        invioDati(roomId, beginTime, endTime, date, description)
     }
 }
 
-async function invioDati(roomId, beginTime, endTime, date) {
+async function invioDati(roomId, beginTime, endTime, date, description) {
     const response = await fetch('http://localhost:3000/api/bookings/booksRoom', {
         method: 'POST',
         headers: {
@@ -49,7 +50,8 @@ async function invioDati(roomId, beginTime, endTime, date) {
             room: roomId,
             date: date,
             start_time: beginTime,
-            end_time: endTime
+            end_time: endTime,
+            description: description
         })
     });
 
