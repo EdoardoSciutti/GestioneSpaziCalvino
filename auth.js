@@ -68,16 +68,28 @@ passport.use(new GoogleStrategy(
   },
   //this function is called when the user is successfully authenticated
   (request, accessToken, refreshToken, profile, done) => {
-      Users.upsert({
-          email: profile.email,
-          name: profile.name.givenName,
-          surname: profile.name.familyName,
-          google_id: profile.id,
-          is_verified: true
-      }).then(([user, created]) => {
-          console.log(created);
-          return done(null, user);
-      })
+    Users.findOne(
+      { where: { email: profile.email } }
+    ).then(user => {
+        if (user) {
+            return user.update({
+                google_id: profile.id,
+                is_verified: true
+            });
+        } else {
+            return Users.create({
+                email: profile.email,
+                name: profile.name.givenName,
+                surname: profile.name.familyName,
+                google_id: profile.id,
+                is_verified: true
+            });
+        }
+    }).then(user => {
+        return done(null, user);
+    }).catch(err => {
+        return done(err, null);
+    });
   }
 ));
 
