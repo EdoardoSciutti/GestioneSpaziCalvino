@@ -6,6 +6,7 @@ const path = require("path")
 //   |   I take the variables store in the file .env   |
 //   +-------------------------------------------------+
 
+dotenv.config();
 
 const sequelize = new Sequelize("calvino_booking", "root", "", {
   host: "localhost",
