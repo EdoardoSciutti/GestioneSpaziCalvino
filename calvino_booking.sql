@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.4
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 10, 2024 alle 12:59
--- Versione del server: 10.1.37-MariaDB
--- Versione PHP: 7.3.0
+-- Creato il: Mag 11, 2024 alle 21:49
+-- Versione del server: 10.4.32-MariaDB
+-- Versione PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -35,7 +34,7 @@ CREATE TABLE `bookings` (
   `start_time` time NOT NULL,
   `end_time` time NOT NULL,
   `user_id` int(11) DEFAULT NULL,
-  `description` varchar(255) COLLATE latin1_general_ci NOT NULL
+  `description` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -69,16 +68,8 @@ DELIMITER ;
 CREATE TABLE `email_verifications` (
   `email_verification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `token` varchar(64) COLLATE latin1_general_ci NOT NULL
+  `token` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
-
---
--- Dump dei dati per la tabella `email_verifications`
---
-
-INSERT INTO `email_verifications` (`email_verification_id`, `user_id`, `token`) VALUES
-(23, 42, 'fb6bb87b-0860-11ef-9ab7-3c7c3f1265e2'),
-(24, 43, 'dfc171a6-0d33-11ef-a3dc-3c7c3f1265e2');
 
 -- --------------------------------------------------------
 
@@ -88,8 +79,17 @@ INSERT INTO `email_verifications` (`email_verification_id`, `user_id`, `token`) 
 
 CREATE TABLE `roles` (
   `role_id` int(11) NOT NULL,
-  `role_name` varchar(20) COLLATE latin1_general_ci NOT NULL
+  `role_name` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+--
+-- Dump dei dati per la tabella `roles`
+--
+
+INSERT INTO `roles` (`role_id`, `role_name`) VALUES
+(1, 'Admin'),
+(2, 'User'),
+(3, 'Viewer');
 
 -- --------------------------------------------------------
 
@@ -99,7 +99,7 @@ CREATE TABLE `roles` (
 
 CREATE TABLE `rooms` (
   `room_id` int(11) NOT NULL,
-  `description` varchar(50) COLLATE latin1_general_ci NOT NULL
+  `description` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -124,23 +124,13 @@ INSERT INTO `rooms` (`room_id`, `description`) VALUES
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
-  `name` varchar(20) COLLATE latin1_general_ci NOT NULL,
-  `surname` varchar(20) COLLATE latin1_general_ci NOT NULL,
-  `email` varchar(50) COLLATE latin1_general_ci NOT NULL,
-  `password` varchar(255) COLLATE latin1_general_ci NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `surname` varchar(20) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `is_verified` tinyint(1) NOT NULL,
-  `google_id` varchar(255) COLLATE latin1_general_ci DEFAULT NULL
+  `google_id` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
-
---
--- Dump dei dati per la tabella `users`
---
-
-INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`, `is_verified`, `google_id`) VALUES
-(19, 'Francesco', 'Tacchino', 'tacchifra@gmail.com', '$2b$10$dKmdy77cgv4uCMyx.SZcfOd4bz1qFgruHO/nVLsCtFD5eMVeHO9O6', 0, NULL),
-(38, 'Simone', 'Secco', 'simoneegesualdi@gmail.com', '$2b$10$w/kcr5mrHzTXJtQKJk5GneUpEFOTHIg5cU8WFts94apED8aQNxV3u', 0, NULL),
-(42, 'Edoardo', 'Sciutti', 'sciutti05@gmail.com', '$2b$10$JHfS1V4YCxqzzaAzbVu9VelNgRAi62HW9F.7Y4hyBkrNzpqMK4bsm', 1, '115158662982403594320'),
-(43, 'Edoardo', 'Sciutti', 'sciutti05@gmail.com', '', 0, '115158662982403594320');
 
 --
 -- Trigger `users`
@@ -230,7 +220,7 @@ ALTER TABLE `email_verifications`
 -- AUTO_INCREMENT per la tabella `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT per la tabella `rooms`
