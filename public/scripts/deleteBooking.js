@@ -123,7 +123,7 @@ function deleteBooking(start_time, end_time, room_description) {
         })
         .then(data => {
             console.log('Data:', data);
-            window.location.reload()
+            searchBookings();
         })
         .catch(error => {
             console.error('There was a problem with the delete operation:', error);
