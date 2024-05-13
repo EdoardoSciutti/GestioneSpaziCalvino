@@ -1,10 +1,10 @@
-window.addEventListener('pageshow', function(event) {
+window.addEventListener('pageshow', function (event) {
     if (event.persisted) {
-        window.location.reload() 
+        window.location.reload()
     }
 });
 
-function buttonLogin(event){
+function buttonLogin(event) {
     event.preventDefault();
 
     let errors = [];
@@ -43,26 +43,26 @@ function buttonLogin(event){
     };
 
     axios.post('http://localhost:3000/api/auth/login', data)
-    .then((response) => {
-        window.location.href = "/";
-    },  (error) => {
-        if (error.response && error.response.status === 404) {
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = 'Utente inesistente';
-        } else if (error.response && error.response.status === 401) {
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = 'Password errata';
-            password.classList.add('is-invalid');
-        } else if (error.response && error.response.status === 402) {
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = 'Utente non Verificato, vai sulla mail';
-            password.classList.add('is-invalid');
-        } else {
-            console.error(error); // Use console.error to log errors
-        }
-    });
+        .then((response) => {
+            window.location.href = "/";
+        }, (error) => {
+            if (error.response && error.response.status === 404) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Utente inesistente';
+            } else if (error.response && error.response.status === 401) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Password errata';
+                password.classList.add('is-invalid');
+            } else if (error.response && error.response.status === 402) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Utente non Verificato, vai sulla mail';
+                password.classList.add('is-invalid');
+            } else {
+                console.error(error); // Use console.error to log errors
+            }
+        });
 }
-document.getElementById('flexCheckDefault').addEventListener('change', function() {
+document.getElementById('flexCheckDefault').addEventListener('change', function () {
     let password = document.getElementById('inputPassword');
 
     if (this.checked) {

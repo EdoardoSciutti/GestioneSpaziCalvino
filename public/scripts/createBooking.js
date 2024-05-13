@@ -1,17 +1,17 @@
-window.addEventListener('pageshow', function(event) {
+window.addEventListener('pageshow', function (event) {
     if (event.persisted) {
-        window.location.reload() 
+        window.location.reload()
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const datePicker = document.getElementById('inputDate');
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    datePicker.value = tomorrow.toISOString().slice(0,10);
+    datePicker.value = tomorrow.toISOString().slice(0, 10);
 });
 
-function buttonLogin(event){
+function buttonCreate(event) {
     event.preventDefault();
     let errors = [];
 
@@ -25,7 +25,7 @@ function buttonLogin(event){
     let endTimeDate = new Date(`1970-01-01T${endTime}:00`);
 
     let currentDate = new Date();
-    currentDate.setHours(0,0,0,0);
+    currentDate.setHours(0, 0, 0, 0);
     let selectedDate = new Date(date);
 
     if (selectedDate < currentDate) {
