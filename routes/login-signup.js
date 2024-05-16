@@ -106,7 +106,7 @@ router.post('/forgotPassword', async (req, res) => {
       subject: 'Password Reset',
       text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
       Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n
-      http://localhost:3000/api/auth/reset/${token}\n\n
+      http://localhost:3000/api/auth/reset/${token} \n\n
       If you did not request this, please ignore this email and your password will remain unchanged.\n`,
   };
 
@@ -122,44 +122,50 @@ router.post('/forgotPassword', async (req, res) => {
 // Endpoint per reimpostare la password
 router.get('/reset/:token', async (req, res) => {
   const { token } = req.params;
+  console.log(token)
   try {
     // Trova la verifica email associata a questo token
     const password_recovery = await Password_recovery.findOne({
-      where: { token: token },
-      include: [{
-        model: Users,
-        required: true
-      }]
+      where: { token: token }
     });
 
     if (!password_recovery) {
       return res.status(400).json({ success: false, message: 'Invalid token' });
     }
 
+    const id_user = password_recovery.dataValues.user_id;
+    const change_password_token = jwt.sign({'id_user' : id_user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
+    res.cookie('change_password_token', change_password_token, { expiresIn: '30m', httpOnly: true });
+
+    // Rimuovi il record
+    await password_recovery.destroy();
 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-  res.redirect('resetPassword.js');
+  res.redirect('/forgotPassword');
 });
 
-router.post('/reset/:token', async (req, res) => {
-  const password_recovery = await Password_recovery.findOne({
+router.post('/reset', async (req, res) => {
+
+  jwt.verify(req.cookies.change_password_token, ACCESS_TOKEN_SECRET, function(err, user) {
+    if (err) {
+      return res.status(400).json({ success: false, message: 'Invalid cookie' });
+    }
+
+  });
+  const user = await Users.findOne({
       where: {
-          token: req.params.token,
-      },
-      include: [Users],
+          id_user: user.id_user,
+      }
   });
 
-  if (!password_recovery) {
-      return res.status(400).json({ error: 'Password reset token is invalid or has expired.' });
+  if (!user) {
+      return res.status(400).json({ error: 'User not found.' });
   }
 
-  password_recovery.user.password = req.body.password; // Aggiorna la password
-  password_recovery.user.resetPasswordToken = null;
-  password_recovery.user.resetPasswordExpires = null;
-  await password_recovery.user.save();
-  await password_recovery.save();
+  user.password = req.body.password; // Aggiorna la password
+  user.save()
   res.status(200).json({ message: 'Password has been updated' });
 });
 
