@@ -1,6 +1,6 @@
 window.addEventListener('pageshow', function(event) {
     if (event.persisted) {
-        window.location.reload() 
+        window.location.reload()
     }
 });
 
@@ -27,6 +27,7 @@ window.onload = function() {
     })
     .then(data => {
         if (data) {
+            console.log(data);
             if (data.success) {
                 bookingTableContainer.style.display = 'block';
                 tutto.style.display = 'block';
