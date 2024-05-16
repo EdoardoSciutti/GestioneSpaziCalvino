@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 4.8.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 11, 2024 alle 21:49
--- Versione del server: 10.4.32-MariaDB
--- Versione PHP: 8.2.12
+-- Creato il: Mag 16, 2024 alle 11:55
+-- Versione del server: 10.1.37-MariaDB
+-- Versione PHP: 7.3.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -34,7 +35,7 @@ CREATE TABLE `bookings` (
   `start_time` time NOT NULL,
   `end_time` time NOT NULL,
   `user_id` int(11) DEFAULT NULL,
-  `description` varchar(255) NOT NULL
+  `description` varchar(255) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -68,8 +69,27 @@ DELIMITER ;
 CREATE TABLE `email_verifications` (
   `email_verification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `token` varchar(64) NOT NULL
+  `token` varchar(64) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `password_recovery`
+--
+
+CREATE TABLE `password_recovery` (
+  `password_recovery_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `token` varchar(255) COLLATE latin1_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+--
+-- Dump dei dati per la tabella `password_recovery`
+--
+
+INSERT INTO `password_recovery` (`password_recovery_id`, `user_id`, `token`) VALUES
+(2, 44, '1625c003483a28e1b15b3ca86aed348e9cd8c1e5');
 
 -- --------------------------------------------------------
 
@@ -79,7 +99,7 @@ CREATE TABLE `email_verifications` (
 
 CREATE TABLE `roles` (
   `role_id` int(11) NOT NULL,
-  `role_name` varchar(20) NOT NULL
+  `role_name` varchar(20) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -99,7 +119,7 @@ INSERT INTO `roles` (`role_id`, `role_name`) VALUES
 
 CREATE TABLE `rooms` (
   `room_id` int(11) NOT NULL,
-  `description` varchar(50) NOT NULL
+  `description` varchar(50) COLLATE latin1_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -124,13 +144,20 @@ INSERT INTO `rooms` (`room_id`, `description`) VALUES
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
-  `name` varchar(20) NOT NULL,
-  `surname` varchar(20) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `name` varchar(20) COLLATE latin1_general_ci NOT NULL,
+  `surname` varchar(20) COLLATE latin1_general_ci NOT NULL,
+  `email` varchar(50) COLLATE latin1_general_ci NOT NULL,
+  `password` varchar(255) COLLATE latin1_general_ci NOT NULL,
   `is_verified` tinyint(1) NOT NULL,
-  `google_id` varchar(255) DEFAULT NULL
+  `google_id` varchar(255) COLLATE latin1_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+--
+-- Dump dei dati per la tabella `users`
+--
+
+INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `password`, `is_verified`, `google_id`) VALUES
+(44, 'Edoardo', 'Sciutti', 'sciutti05@gmail.com', '', 1, '115158662982403594320');
 
 --
 -- Trigger `users`
@@ -175,6 +202,13 @@ ALTER TABLE `email_verifications`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indici per le tabelle `password_recovery`
+--
+ALTER TABLE `password_recovery`
+  ADD PRIMARY KEY (`password_recovery_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indici per le tabelle `roles`
 --
 ALTER TABLE `roles`
@@ -214,7 +248,13 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT per la tabella `email_verifications`
 --
 ALTER TABLE `email_verifications`
-  MODIFY `email_verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `email_verification_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT per la tabella `password_recovery`
+--
+ALTER TABLE `password_recovery`
+  MODIFY `password_recovery_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT per la tabella `roles`
@@ -232,7 +272,7 @@ ALTER TABLE `rooms`
 -- AUTO_INCREMENT per la tabella `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT per la tabella `users_roles`
@@ -256,6 +296,12 @@ ALTER TABLE `bookings`
 --
 ALTER TABLE `email_verifications`
   ADD CONSTRAINT `email_verifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Limiti per la tabella `password_recovery`
+--
+ALTER TABLE `password_recovery`
+  ADD CONSTRAINT `password_recovery_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Limiti per la tabella `users_roles`

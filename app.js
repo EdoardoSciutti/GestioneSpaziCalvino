@@ -53,6 +53,10 @@ app.get('/deleteBooking', (req, res) => {
     res.render('../public/views/deleteBooking.html');
 })
 
+app.get('/forgotPassword', (req, res) => {
+    res.render('../public/views/forgotPassword.html');
+})
+
 app.use('/styles', express.static(__dirname + '/public/styles'));
 app.use('/scripts', express.static(__dirname + '/public/scripts'));
 

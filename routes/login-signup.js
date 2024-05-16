@@ -44,8 +44,8 @@ router.post('/register', (req, res) => {
   const { email, password, name, surname } = req.body
   try {
     bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS_SECRET), (err, hash) => {
-      if (err) 
-        return res.status(500).json({ error: err.message });  
+      if (err)
+        return res.status(500).json({ error: err.message });
       Users.findOrCreate({
         where: {
           email: email,
@@ -87,7 +87,7 @@ router.post('/forgotPassword', async (req, res) => {
       token: token
     }
   });
-  
+
   user.resetPasswordToken = token;
   user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
   await user.save();
@@ -95,7 +95,7 @@ router.post('/forgotPassword', async (req, res) => {
   const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
-          user: process.env.EMAIL_ADDRESS,
+          user: process.env.EMAIL_USERNAME,
           pass: process.env.EMAIL_PASSWORD,
       },
   });
@@ -124,14 +124,14 @@ router.get('/reset/:token', async (req, res) => {
   const { token } = req.params;
   try {
     // Trova la verifica email associata a questo token
-    const password_recovery = await Password_recovery.findOne({ 
+    const password_recovery = await Password_recovery.findOne({
       where: { token: token },
       include: [{
         model: Users,
         required: true
       }]
     });
-  
+
     if (!password_recovery) {
       return res.status(400).json({ success: false, message: 'Invalid token' });
     }
@@ -168,24 +168,24 @@ router.get('/verifyEmail/:token', async (req, res) => {
   const { token } = req.params;
   try {
     // Trova la verifica email associata a questo token
-    const emailVerification = await Email_verifications.findOne({ 
+    const emailVerification = await Email_verifications.findOne({
       where: { token: token },
       include: [{
         model: Users,
         required: true
       }]
     });
-  
+
     if (!emailVerification) {
       return res.status(400).json({ success: false, message: 'Invalid token' });
     }
-  
+
     // Imposta il campo is_verified su true
     emailVerification.user.is_verified = true;
     emailVerification.destroy();
     await emailVerification.save();
     await emailVerification.user.save();
-  
+
     res.redirect('/authSuccess');
 
   } catch (error) {
@@ -242,10 +242,10 @@ router.post('/login', (req, res) => {
 
 router.get('/googleAuth', passport.authenticate('google', { scope: [ 'email', 'profile' ] }));
 
-router.get('/googleCallback', 
-    passport.authenticate('google', 
-    { 
-        failureRedirect: `http://localhost:3000/api/auth/googleFailure`, 
+router.get('/googleCallback',
+    passport.authenticate('google',
+    {
+        failureRedirect: `http://localhost:3000/api/auth/googleFailure`,
         successRedirect: `http://localhost:3000/api/auth/googleSuccess`
     })
 );
