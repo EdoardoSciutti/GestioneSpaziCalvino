@@ -1,11 +1,17 @@
-document.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
+        window.location.reload()
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
     const datePicker = document.getElementById('inputDate');
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    datePicker.value = tomorrow.toISOString().slice(0,10);
+    datePicker.value = tomorrow.toISOString().slice(0, 10);
 });
 
-function buttonLogin(event){
+function buttonCreate(event) {
     event.preventDefault();
     let errors = [];
 
@@ -13,12 +19,13 @@ function buttonLogin(event){
     let beginTime = document.getElementById('inputTime1').value;
     let endTime = document.getElementById('inputTime2').value;
     let date = document.getElementById('inputDate').value;
+    let description = document.getElementById('inputDescription').value;
 
     let beginTimeDate = new Date(`1970-01-01T${beginTime}:00`);
     let endTimeDate = new Date(`1970-01-01T${endTime}:00`);
 
     let currentDate = new Date();
-    currentDate.setHours(0,0,0,0);
+    currentDate.setHours(0, 0, 0, 0);
     let selectedDate = new Date(date);
 
     if (selectedDate < currentDate) {
@@ -35,11 +42,11 @@ function buttonLogin(event){
         errorMessageElement.innerHTML = errors.join('<br>');
     } else {
         errorMessageElement.style.display = 'none';
-        invioDati(roomId, beginTime, endTime, date)
+        invioDati(roomId, beginTime, endTime, date, description)
     }
 }
 
-async function invioDati(roomId, beginTime, endTime, date) {
+async function invioDati(roomId, beginTime, endTime, date, description) {
     const response = await fetch('http://localhost:3000/api/bookings/booksRoom', {
         method: 'POST',
         headers: {
@@ -49,7 +56,8 @@ async function invioDati(roomId, beginTime, endTime, date) {
             room: roomId,
             date: date,
             start_time: beginTime,
-            end_time: endTime
+            end_time: endTime,
+            description: description
         })
     });
 

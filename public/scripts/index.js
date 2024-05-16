@@ -1,3 +1,9 @@
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        window.location.reload() 
+    }
+});
+
 window.onload = function() {
     var tutto = document.getElementById('tutto');
     var messaggio = document.getElementById('logga');

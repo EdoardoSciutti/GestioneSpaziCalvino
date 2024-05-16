@@ -1,3 +1,9 @@
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        window.location.reload() 
+    }
+});
+
 function buttonRegistrati(event){
     event.preventDefault();
 

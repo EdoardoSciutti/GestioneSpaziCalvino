@@ -5,7 +5,7 @@ const Sequelize = require('sequelize');
 const express = require('express')
 const router = express.Router()
 require('dotenv').config();
-const {authenticateToken} = require('../auth.js')
+const { authenticateToken } = require('../auth.js')
 //modelli sql
 const { Users, Rooms, Roles, Bookings, UsersRoles } = require('../sequelize/model.js')
 const { Op, where } = require('sequelize');
@@ -18,19 +18,19 @@ const { Op, where } = require('sequelize');
     Description: allow the user to book a room
     Path: http://localhost:3000/api/bookings/booksRoom
     Method: POST
-    Response: a message that confirms the booking 
+    Response: a message that confirms the booking
     Requirement: authentication token
  */
 router.post('/booksRoom', authenticateToken, async (req, res) => {
     const { room, date, start_time, end_time, description } = req.body
     const user_id = req.user.id
-    if (!room || !date || !start_time || !end_time) 
+    if (!room || !date || !start_time || !end_time)
         return res.status(400).json({ error: 'Missing room or date' });
 
     if (end_time <= start_time) {
         return res.status(400).json({ error: 'End time must be greater than start time' });
     }
-    try{
+    try {
         // it searches for a booking that has the same room, date and conflicting time
         const conflictingBooking = await Bookings.findOne({
             where: {
@@ -74,7 +74,7 @@ router.post('/booksRoom', authenticateToken, async (req, res) => {
 });
 
 router.post('/deleteBooking', authenticateToken, async (req, res) => {
-    const {date_day, start_time, end_time, room_id} = req.body;
+    const { date_day, start_time, end_time, room_id } = req.body;
     const user_id = req.user.id;
     console.log(req.body);
     Bookings.findOne({
@@ -89,7 +89,7 @@ router.post('/deleteBooking', authenticateToken, async (req, res) => {
         if (booking && booking.user_id == user_id) {
             booking.destroy();
             res.status(200).json({ success: true, message: 'Booking deleted' });
-        } else if(booking && booking.user_id != user_id){
+        } else if (booking && booking.user_id != user_id) {
             UsersRoles.findAll({
                 where: {
                     user_id: user_id
@@ -103,8 +103,8 @@ router.post('/deleteBooking', authenticateToken, async (req, res) => {
                     res.status(401).json({ success: false, message: 'You are not authorized to delete this booking' });
                 }
             });
-        } 
-        else if(!booking){
+        }
+        else if (!booking) {
             res.status(400).json({ success: false, message: 'Booking not found' });
         }
     }).catch(error => {
@@ -120,8 +120,8 @@ router.post('/deleteBooking', authenticateToken, async (req, res) => {
     Requirement: authentication token
  */
 router.get('/getBookingsOfRoom/:roomId', authenticateToken, async (req, res) => {
-    const {roomId} = req.params;
-    
+    const { roomId } = req.params;
+
     Rooms.findAll({
         where: {
             room_id: roomId
@@ -140,8 +140,13 @@ router.get('/getBookingsOfRoom/:roomId', authenticateToken, async (req, res) => 
 
 });
 
+/*
+    Path: http://localhost:3000/api/bookings/getBookingsOfDay/:roomId/:day
+    Method: GET
+*/
+
 router.get('/getBookingsOfRoom/:roomId/:day', authenticateToken, async (req, res) => {
-    const {roomId, day} = req.params;
+    const { roomId, day } = req.params;
     console.log(day);
     Rooms.findAll({
         where: {
@@ -177,17 +182,22 @@ router.get('/getBookingsOfRoom/:roomId/:day', authenticateToken, async (req, res
     Requirement: authentication token
  */
 router.get('/getBookingsOfDay/:day', authenticateToken, async (req, res) => {
-    const {day} = req.params;
-    
+    const { day } = req.params;
+
     Bookings.findAll({
         where: {
-            date_day: day
+            date_day: new Date(day)
         },
         attributes: ['start_time', 'end_time', 'description'],
-        include: {
+        include: [{
             model: Rooms,
-            attributes: ['description']
+            attributes: ['description', 'room_id']
+        },
+        {
+            model: Users,
+            attributes: ['name', 'surname']
         }
+        ],
     }).then(bookings => {
         res.status(200).json(bookings);
     }).catch(error => {
@@ -205,11 +215,11 @@ router.get('/getBookingsOfDay/:day', authenticateToken, async (req, res) => {
  */
 router.get('/getBookingsOfDay', authenticateToken, async (req, res) => {
     const day = new Date().toISOString().slice(0, 10);
-        
+
     Bookings.findAll({
         where: {
             date_day: day
-        }, 
+        },
         attributes: ['start_time', 'end_time', 'description'],
         include: {
             model: Rooms
@@ -220,6 +230,6 @@ router.get('/getBookingsOfDay', authenticateToken, async (req, res) => {
         res.status(500).json({ error: error.message });
     });
 })
-    
+
 
 module.exports = router
