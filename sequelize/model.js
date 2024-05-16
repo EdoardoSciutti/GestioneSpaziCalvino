@@ -137,6 +137,23 @@ const Email_verifications = sequelize.define('email_verifications', {
   freezeTableName: true
 });
 
+const Password_recovery = sequelize.define('password_recovery', {
+  password_recovery_id: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+  },
+  user_id: Sequelize.INTEGER,
+  token: Sequelize.STRING,
+}, {
+  tableName: 'password_recovery',
+  freezeTableName: true
+});
+
+Users.hasOne(Password_recovery, { foreignKey: 'user_id' });
+Password_recovery.belongsTo(Users, { foreignKey: 'user_id' });
+
 Users.hasOne(Email_verifications, { foreignKey: 'user_id' });
 Email_verifications.belongsTo(Users, { foreignKey: 'user_id' });
 
@@ -149,4 +166,4 @@ Users.hasMany(Bookings, { foreignKey: 'user_id' });
 Bookings.belongsTo(Rooms, { foreignKey: 'room_id' });
 Rooms.hasMany(Bookings, { foreignKey: 'room_id' });
 
-module.exports = {Users, Rooms, Roles, Bookings, UsersRoles, Email_verifications} 
+module.exports = {Users, Rooms, Roles, Bookings, UsersRoles, Email_verifications, Password_recovery} 

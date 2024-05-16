@@ -1,4 +1,6 @@
-//mail di conferma
+//recupero passwors
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 
 //file con il middleware per il token
@@ -10,7 +12,7 @@ const router = express.Router()
 const passport = require('passport');
 
 //modelli sql
-const { Users, Rooms, Roles, Bookings, UserRoles, Email_verifications } = require('../sequelize/model.js')
+const { Users, Rooms, Roles, Bookings, UserRoles, Email_verifications, Password_recovery } = require('../sequelize/model.js')
 
 //.env
 require('dotenv').config();
@@ -25,6 +27,7 @@ router.get('/login', async(req, res) => {
 
 //jwt
 const jwt = require('jsonwebtoken');
+const { where } = require('sequelize');
 
 router.get('/signup', (req, res) => {
     res.render('../public/views/signup.ejs');
@@ -69,6 +72,97 @@ router.post('/register', (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.post('/forgotPassword', async (req, res) => {
+  const user = await Users.findOne({ where: { email: req.body.email } });
+  if (!user) {
+      return res.status(400).json({ error: 'Email not found' });
+  }
+  const token = crypto.randomBytes(20).toString('hex');
+  Password_recovery.findOrCreate({
+    where: {
+      user_id: user.user_id
+    },
+    defaults: {
+      token: token
+    }
+  });
+  
+  user.resetPasswordToken = token;
+  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  await user.save();
+
+  const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+          user: process.env.EMAIL_ADDRESS,
+          pass: process.env.EMAIL_PASSWORD,
+      },
+  });
+
+  const mailOptions = {
+      from: 'no-reply@example.com',
+      to: user.email,
+      subject: 'Password Reset',
+      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+      Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n
+      http://localhost:3000/api/auth/reset/${token}\n\n
+      If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+  };
+
+  transporter.sendMail(mailOptions, (err, response) => {
+      if (err) {
+          console.error('there was an error: ', err);
+      } else {
+          res.status(200).json('recovery email sent');
+      }
+  });
+});
+
+// Endpoint per reimpostare la password
+router.get('/reset/:token', async (req, res) => {
+  const { token } = req.params;
+  try {
+    // Trova la verifica email associata a questo token
+    const password_recovery = await Password_recovery.findOne({ 
+      where: { token: token },
+      include: [{
+        model: Users,
+        required: true
+      }]
+    });
+  
+    if (!password_recovery) {
+      return res.status(400).json({ success: false, message: 'Invalid token' });
+    }
+
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+  res.redirect('resetPassword.js');
+});
+
+router.post('/reset/:token', async (req, res) => {
+  const password_recovery = await Password_recovery.findOne({
+      where: {
+          token: req.params.token,
+      },
+      include: [Users],
+  });
+
+  if (!password_recovery) {
+      return res.status(400).json({ error: 'Password reset token is invalid or has expired.' });
+  }
+
+  password_recovery.user.password = req.body.password; // Aggiorna la password
+  password_recovery.user.resetPasswordToken = null;
+  password_recovery.user.resetPasswordExpires = null;
+  await password_recovery.user.save();
+  await password_recovery.save();
+  res.status(200).json({ message: 'Password has been updated' });
+});
+
 
 router.get('/verifyEmail/:token', async (req, res) => {
   const { token } = req.params;
