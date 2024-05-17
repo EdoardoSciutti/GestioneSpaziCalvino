@@ -57,6 +57,10 @@ app.get('/forgotPassword', (req, res) => {
     res.render('../public/views/forgotPassword.html');
 })
 
+app.get('/changePassword', (req, res) => {
+    res.render('../public/views/changePassword.html');
+})
+
 app.use('/styles', express.static(__dirname + '/public/styles'));
 app.use('/scripts', express.static(__dirname + '/public/scripts'));
 

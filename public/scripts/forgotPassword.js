@@ -20,6 +20,7 @@ async function invioDati(mail) {
         console.log("Fallito: " + data.error);
     } else {
         console.log("Riucito: " + data.message);
+        window.location.href = '/changePassword';
     }
 
     console.log(data);

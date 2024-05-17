@@ -62,6 +62,7 @@ function buttonLogin(event) {
             }
         });
 }
+
 document.getElementById('flexCheckDefault').addEventListener('change', function () {
     let password = document.getElementById('inputPassword');
 
@@ -71,3 +72,7 @@ document.getElementById('flexCheckDefault').addEventListener('change', function 
         password.type = 'password';
     }
 });
+
+function cambio(){
+    window.location.href = '/forgotPassword';
+}

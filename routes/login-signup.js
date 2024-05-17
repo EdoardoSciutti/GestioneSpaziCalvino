@@ -1,36 +1,36 @@
-//recupero passwors
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const { authenticateToken } = require('../auth.js');
+const express = require('express');
+const passport = require('passport');
+const { Users, Rooms, Roles, Bookings, UserRoles, Email_verifications, Password_recovery } = require('../sequelize/model.js');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { where } = require('sequelize');
 
+//recupero passwors
 
 //file con il middleware per il token
-const {authenticateToken} = require('../auth.js')
 
 //di base
-const express = require('express')
-const router = express.Router()
-const passport = require('passport');
+const router = express.Router();
 
 //modelli sql
-const { Users, Rooms, Roles, Bookings, UserRoles, Email_verifications, Password_recovery } = require('../sequelize/model.js')
 
 //.env
 require('dotenv').config();
 
 //bcript
-const bcrypt = require('bcrypt');
 
 //get delle pagine login e signup
-router.get('/login', async(req, res) => {
-    res.render('../public/views/login.ejs');
+router.get('/login', async (req, res) => {
+  res.render('../public/views/login.ejs');
 });
 
 //jwt
-const jwt = require('jsonwebtoken');
-const { where } = require('sequelize');
 
 router.get('/signup', (req, res) => {
-    res.render('../public/views/signup.ejs');
+  res.render('../public/views/signup.ejs');
 });
 
 /*
@@ -41,7 +41,7 @@ router.get('/signup', (req, res) => {
     Requirement: email, password, name, surname (all in the body)
  */
 router.post('/register', (req, res) => {
-  const { email, password, name, surname } = req.body
+  const { email, password, name, surname } = req.body;
   try {
     bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS_SECRET), (err, hash) => {
       if (err)
@@ -62,9 +62,9 @@ router.post('/register', (req, res) => {
           const refresh_token = jwt.sign(user_for_token, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
           res.cookie('access_token', access_token, { httpOnly: true });
           res.cookie('refresh_token', refresh_token, { httpOnly: true });
-          res.status(201).json({success : true, message: 'User created'});
+          res.status(201).json({ success: true, message: 'User created' });
         } else {
-          res.status(400).json({success : false, message: 'User already exists'});
+          res.status(400).json({ success: false, message: 'User already exists' });
         }
       });
     });
@@ -76,7 +76,7 @@ router.post('/register', (req, res) => {
 router.post('/forgotPassword', async (req, res) => {
   const user = await Users.findOne({ where: { email: req.body.email } });
   if (!user) {
-      return res.status(400).json({ error: 'Email not found' });
+    return res.status(400).json({ error: 'Email not found' });
   }
   const token = crypto.randomBytes(20).toString('hex');
   Password_recovery.findOrCreate({
@@ -93,36 +93,36 @@ router.post('/forgotPassword', async (req, res) => {
   await user.save();
 
   const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-          user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD,
-      },
+    service: 'Gmail',
+    auth: {
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD,
+    },
   });
 
   const mailOptions = {
-      from: 'no-reply@example.com',
-      to: user.email,
-      subject: 'Password Reset',
-      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+    from: 'no-reply@example.com',
+    to: user.email,
+    subject: 'Password Reset',
+    text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
       Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n
       http://localhost:3000/api/auth/reset/${token} \n\n
       If you did not request this, please ignore this email and your password will remain unchanged.\n`,
   };
 
   transporter.sendMail(mailOptions, (err, response) => {
-      if (err) {
-          console.error('there was an error: ', err);
-      } else {
-          res.status(200).json('recovery email sent');
-      }
+    if (err) {
+      console.error('there was an error: ', err);
+    } else {
+      res.status(200).json('recovery email sent');
+    }
   });
 });
 
 // Endpoint per reimpostare la password
 router.get('/reset/:token', async (req, res) => {
   const { token } = req.params;
-  console.log(token)
+  console.log(token);
   try {
     // Trova la verifica email associata a questo token
     const password_recovery = await Password_recovery.findOne({
@@ -133,8 +133,8 @@ router.get('/reset/:token', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid token' });
     }
 
-    const id_user = password_recovery.dataValues.user_id;
-    const change_password_token = jwt.sign({'id_user' : id_user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
+    const user_id = password_recovery.dataValues.user_id;
+    const change_password_token = jwt.sign({ 'user_id': user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
     res.cookie('change_password_token', change_password_token, { expiresIn: '30m', httpOnly: true });
 
     // Rimuovi il record
@@ -143,29 +143,33 @@ router.get('/reset/:token', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-  res.redirect('/forgotPassword');
+  res.redirect('/changePassword');
 });
 
 router.post('/reset', async (req, res) => {
 
-  jwt.verify(req.cookies.change_password_token, ACCESS_TOKEN_SECRET, function(err, user) {
+  jwt.verify(req.cookies.change_password_token, process.env.ACCESS_TOKEN_SECRET, async function (err, user) {
     if (err) {
       return res.status(400).json({ success: false, message: 'Invalid cookie' });
     }
 
-  });
-  const user = await Users.findOne({
+    const utente = await Users.findOne({
       where: {
-          id_user: user.id_user,
+        user_id: user.user_id,
       }
-  });
+    });
 
-  if (!user) {
+    console.log(utente);
+
+    if (!utente) {
       return res.status(400).json({ error: 'User not found.' });
-  }
-
-  user.password = req.body.password; // Aggiorna la password
-  user.save()
+    }
+    bcrypt.hash(req.body.password, parseInt(process.env.SALT_ROUNDS_SECRET), (err, hash) => {
+      if (err)  return res.status(500).json({ error: err.message });
+      utente.password = hash;
+      utente.save();
+    });
+  });
   res.status(200).json({ message: 'Password has been updated' });
 });
 
@@ -220,8 +224,8 @@ router.post('/login', (req, res) => {
         res.status(402).json({ success: false, message: 'L\'user non è verificato.' });
       } else {
         console.log(user);
-        bcrypt.compare(dati.password, user.password, function(_, result) {
-          if(result) {
+        bcrypt.compare(dati.password, user.password, function (_, result) {
+          if (result) {
             // Le password corrispondono
             const user_for_token = { email: user.email, id: user.user_id };
             const access_token = jwt.sign(user_for_token, process.env.ACCESS_TOKEN_SECRET, {
@@ -232,7 +236,7 @@ router.post('/login', (req, res) => {
             });
             res.cookie('access_token', access_token, { httpOnly: true });
             res.cookie('refresh_token', refresh_token, { httpOnly: true });
-            res.status(200).json({ success: true, message: 'L\'user esiste.'});
+            res.status(200).json({ success: true, message: 'L\'user esiste.' });
           } else {
             // Le password non corrispondono
             res.status(401).json({ success: false, message: 'Password errata.' });
@@ -246,13 +250,13 @@ router.post('/login', (req, res) => {
     });
 });
 
-router.get('/googleAuth', passport.authenticate('google', { scope: [ 'email', 'profile' ] }));
+router.get('/googleAuth', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
 router.get('/googleCallback',
-    passport.authenticate('google',
+  passport.authenticate('google',
     {
-        failureRedirect: `http://localhost:3000/api/auth/googleFailure`,
-        successRedirect: `http://localhost:3000/api/auth/googleSuccess`
+      failureRedirect: `http://localhost:3000/api/auth/googleFailure`,
+      successRedirect: `http://localhost:3000/api/auth/googleSuccess`
     })
 );
 
@@ -270,7 +274,7 @@ router.get('/googleSuccess', (req, res) => {
 });
 
 router.get('/googleFailure', (req, res) => {
-    res.status(401).json({ success: false, message: 'User not logged with google' });
+  res.status(401).json({ success: false, message: 'User not logged with google' });
 });
 
 router.get('/isLogged', authenticateToken, (req, res) => {
@@ -283,5 +287,4 @@ router.get('/logout', (req, res) => {
   res.status(200).json({ success: true, message: 'User logged out' });
 });
 
-
-module.exports = router
+module.exports = router;
