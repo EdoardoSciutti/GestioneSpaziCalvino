@@ -1,36 +1,30 @@
 # School-Gestion
-Sito Web per prenotare la Sala Agorà e L'aula Magna
+Web site to reserve the Agora Hall and The Great Hall
 
-Fasi:
+Phases:
 
-1 - Progettare il Database
+1 - Design the Database
 
-  1.1 - Schema ER
-  1.2 - Schema Logico
-  1.3 - Creazioni Stored Procedure & View
+  1.1 - ER Schema
+  1.2 - Logical Schema
+  1.3 - Stored Procedure & View Creations
 
-2 - Progettare il Sito Web
+2 - Designing the Web Site
 
-  2.1 - Struttura Sito
+  2.1 - Site Structure
   2.2 - Wireframe
   2.3 - Mock Up
 
-3 - Collegare i Due
+3 - Connecting the Two
 
-  3.1 - Collegare il FrontEnd al BackEnd
+  3.1 - Connecting the FrontEnd to the BackEnd
 
-4 - Test
+4 - Testing
 
-  4.1 - Prove con Xampp
-  4.2 - Caricamento sul database del Calvino
+  4.1 - Testing with Xampp
+  4.2 - Uploading to the Calvin database.
 
-__FUNZIONALITÀ DELL'APPLICAZIONE__:
-Gli user sono coloro che prenoteranno le stanze, e essi faranno parte di una compagnia.
-Gli user saranno gli impiegati di un'azienda, e questi potranno prenotare delle stanze. 
-Nel caso in cui siano i professori, saranno impiegati del Calvino, così come i rappresentanti d'istituto. 
-
-PER SCIUTTI:
-
-- SE DEVO FARE ALTRO SCRIVIMELO QUI
-
-prenotazione (http://localhost:3000/api/bookings/booksroom): date, room, start_time, end_time
+__FUNCTIONALITY OF THE APPLICATION__:
+Users are those who will book rooms, and they will be part of a company.
+Users will be the employees of a company, and they will be able to book rooms. 
+In the case of teachers, they will be employees of the Calvin, as well as school representatives. 
