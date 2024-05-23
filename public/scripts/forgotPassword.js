@@ -19,7 +19,7 @@ async function invioDati(mail) {
     if (response.status === 400) {
         console.log("Fallito: " + data.error);
     } else {
-        console.log("Riucito: " + data.message);
+        console.log("Riuscito: " + data.message);
         window.location.href = '/changePassword';
     }
 

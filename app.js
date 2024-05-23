@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const session = require('express-session');
 const passport = require('passport');
+const { authenticateToken, authenticateTokenRedirect } = require('./auth.js');
 
 //body parser
 const bodyParser = require('body-parser');
@@ -41,15 +42,21 @@ app.get('/login', (req, res) => {
     res.render('../public/views/login.html');
 })
 
-app.get('/authSuccess', (req, res) => {
+app.get('/authSuccess',  (req, res) => {
     res.render('../public/views/authSuccess.html');
 })
 
-app.get('/createBooking', (req, res) => {
+app.get('/createBooking', authenticateTokenRedirect, (req, res) => {
+    if (!req.user) {
+        return res.render('../public/views/index.html');
+    }
     res.render('../public/views/createBooking.html');
 })
 
-app.get('/deleteBooking', (req, res) => {
+app.get('/deleteBooking', authenticateTokenRedirect, (req, res) => {
+    if (res.statusCode === 401) {
+        return res.render('../public/views/index.html');
+    }
     res.render('../public/views/deleteBooking.html');
 })
 
