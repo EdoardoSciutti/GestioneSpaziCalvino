@@ -68,6 +68,10 @@ app.get('/changePassword', (req, res) => {
     res.render('../public/views/changePassword.html');
 })
 
+app.get('/passwordSuccess', (req, res) => {
+    res.render('../public/views/passwordSuccess.html');
+})
+
 app.use('/styles', express.static(__dirname + '/public/styles'));
 app.use('/scripts', express.static(__dirname + '/public/scripts'));
 
