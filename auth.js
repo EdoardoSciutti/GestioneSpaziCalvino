@@ -99,6 +99,11 @@ function authenticateTokenRedirect(req, res, next) {
     });
 }
 
+//check if the email has a valid domain
+function checkEmail(email) {
+    return email.split('@')[1] === 'calvino.edu.it'
+}
+
 
 passport.use(new GoogleStrategy(
   {
@@ -110,6 +115,9 @@ passport.use(new GoogleStrategy(
   },
   //this function is called when the user is successfully authenticated
   (request, accessToken, refreshToken, profile, done) => {
+    if (!checkEmail(profile.email)) {
+        return done(new Error(), null);
+    }
     Users.findOne(
       { where: { email: profile.email } }
     ).then(user => {
@@ -143,4 +151,4 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
-module.exports = { authenticateToken, authenticateTokenRedirect};
+module.exports = { authenticateToken, authenticateTokenRedirect, checkEmail};

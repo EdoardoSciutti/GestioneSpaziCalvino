@@ -1,6 +1,6 @@
 window.addEventListener('pageshow', function(event) {
     if (event.persisted) {
-        window.location.reload() 
+        window.location.reload()
     }
 });
 
@@ -56,10 +56,16 @@ function buttonRegistrati(event){
     }
 
     let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email.value && !emailRegex.test(email.value)) {
-        errors.push('Email non valida');
-        email.classList.add('is-invalid');
-    }
+        if (email.value && !emailRegex.test(email.value)) {
+            errors.push('Email non valida');
+            email.classList.add('is-invalid');
+        }
+
+        // Check if email ends with @calvino.edu.it
+        if (email.value && !email.value.endsWith('@calvino.edu.it')) {
+            errors.push('L\'email deve essere un\'email istituzionale dell\'Istituto Calvino');
+            email.classList.add('is-invalid');
+        }
 
     if (errors.length > 0) {
         errorMessage.style.display = 'block';

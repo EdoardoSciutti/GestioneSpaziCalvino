@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const { authenticateToken } = require('../auth.js');
+const { authenticateToken, checkEmail} = require('../auth.js');
 const express = require('express');
 const passport = require('passport');
 const { Users, Rooms, Roles, Bookings, UserRoles, Email_verifications, Password_recovery } = require('../sequelize/model.js');
@@ -42,6 +42,7 @@ router.get('/signup', (req, res) => {
  */
 router.post('/register', (req, res) => {
   const { email, password, name, surname } = req.body;
+  if(!checkEmail(email)) return res.status(400).json({ success: false, message: 'Email has to use domain calvino.edu.it' });
   try {
     bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS_SECRET), (err, hash) => {
       if (err)
