@@ -86,6 +86,11 @@ router.post('/forgotPassword', async (req, res) => {
     defaults: {
       token: token
     }
+  }).then(([password_recovery, created]) => {
+    if (!created) {
+      password_recovery.token = token;
+      password_recovery.save();
+    }
   });
 
   user.resetPasswordToken = token;
