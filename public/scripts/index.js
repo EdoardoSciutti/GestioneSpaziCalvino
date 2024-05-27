@@ -4,16 +4,24 @@ window.addEventListener('pageshow', function(event) {
     }
 });
 
+
+
+var tutto, messaggio, esci, accedi, registrati, nuovo, elimina;
+
 window.onload = function() {
-    var tutto = document.getElementById('tutto');
-    var messaggio = document.getElementById('logga');
-    var esci = document.getElementById('esci');
-    var accedi = document.getElementById('accedi');
-    var registrati = document.getElementById('registrati');
-    var nuovo = document.getElementById('createBooking');
-    var elimina = document.getElementById('deleteBooking');
+    tutto = document.getElementById('tutto');
+    messaggio = document.getElementById('logga');
+    esci = document.getElementById('esci');
+    accedi = document.getElementById('accedi');
+    registrati = document.getElementById('registrati');
+    nuovo = document.getElementById('createBooking');
+    elimina = document.getElementById('deleteBooking');
     esci.addEventListener('click', logout);
 
+    checkLoginStatus();
+}
+
+function checkLoginStatus() {
     fetch('http://localhost:3000/api/auth/isLogged', {
         method: 'GET',
         credentials: 'include'
@@ -29,29 +37,38 @@ window.onload = function() {
         if (data) {
             console.log(data);
             if (data.success) {
-                bookingTableContainer.style.display = 'block';
-                tutto.style.display = 'block';
-                messaggio.style.display = 'none';
-                esci.style.display = 'block';
-                accedi.style.display = 'none';
-                registrati.style.display = 'none';
-                nuovo.style.display = 'block';
-                elimina.style.display = 'block';
+                console.log("Sei Loggato")
+                displayLoggedInElements();
             } else {
-                bookingTableContainer.style.display = 'none';
-                tutto.style.display = 'none';
-                messaggio.style.display = 'block';
-                esci.style.display = 'none';
-                accedi.style.display = 'block';
-                registrati.style.display = 'block';
-                nuovo.style.display = 'none';
-                elimina.style.display = 'none';
+                displayLoggedOutElements();
             }
         }
     })
     .catch((error) => {
         console.error('Error:', error);
     });
+}
+
+function displayLoggedInElements() {
+    bookingTableContainer.style.display = 'block';
+    tutto.style.display = 'block';
+    messaggio.style.display = 'none';
+    esci.style.display = 'block';
+    accedi.style.display = 'none';
+    registrati.style.display = 'none';
+    nuovo.style.display = 'block';
+    elimina.style.display = 'block';
+}
+
+function displayLoggedOutElements() {
+    bookingTableContainer.style.display = 'none';
+    tutto.style.display = 'none';
+    messaggio.style.display = 'block';
+    esci.style.display = 'none';
+    accedi.style.display = 'block';
+    registrati.style.display = 'block';
+    nuovo.style.display = 'none';
+    elimina.style.display = 'none';
 }
 
 function logout() {
