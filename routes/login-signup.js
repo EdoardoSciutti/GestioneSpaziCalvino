@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const { authenticateToken, checkEmail} = require('../auth.js');
+const { authenticateToken, checkEmail } = require('../auth.js');
 const express = require('express');
 const passport = require('passport');
 const { Users, Rooms, Roles, Bookings, UserRoles, Email_verifications, Password_recovery } = require('../sequelize/model.js');
@@ -42,7 +42,7 @@ router.get('/signup', (req, res) => {
  */
 router.post('/register', (req, res) => {
   const { email, password, name, surname } = req.body;
-  if(!checkEmail(email)) return res.status(400).json({ success: false, message: 'Email has to use domain calvino.edu.it' });
+  if (!checkEmail(email)) return res.status(400).json({ success: false, message: 'Email has to use domain calvino.edu.it' });
   try {
     bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS_SECRET), (err, hash) => {
       if (err)
@@ -171,7 +171,7 @@ router.post('/reset', async (req, res) => {
       return res.status(400).json({ error: 'User not found.' });
     }
     bcrypt.hash(req.body.password, parseInt(process.env.SALT_ROUNDS_SECRET), (err, hash) => {
-      if (err)  return res.status(500).json({ error: err.message });
+      if (err) return res.status(500).json({ error: err.message });
       utente.password = hash;
       utente.save();
     });
@@ -263,7 +263,15 @@ router.get('/googleCallback',
     {
       failureRedirect: `http://localhost:3000/api/auth/googleFailure`,
       successRedirect: `http://localhost:3000/api/auth/googleSuccess`
-    })
+    }),
+  (err, req, res, next) => {
+    if (err) {
+      if (err.message === 'Invalid email domain') {
+        return res.redirect('/login?error=noCalvino');
+      }
+      return next(err);
+    }
+  }
 );
 
 router.get('/googleSuccess', (req, res) => {

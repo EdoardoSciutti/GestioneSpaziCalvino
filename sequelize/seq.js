@@ -1,7 +1,8 @@
-const Sequelize = require('sequelize'); 
+const Sequelize = require('sequelize');
 const dotenv = require('dotenv');
-const fs = require("fs")
-const path = require("path")
+const fs = require("fs");
+const path = require("path");
+
 //   +-------------------------------------------------+
 //   |   I take the variables store in the file .env   |
 //   +-------------------------------------------------+

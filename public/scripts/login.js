@@ -2,6 +2,20 @@ window.addEventListener('pageshow', function (event) {
     if (event.persisted) {
         window.location.reload()
     }
+
+    let errorMessage = document.getElementById('errorMessage');
+    let errors = [];
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === 'noCalvino') {
+        errors.push('L\'email deve essere un\'email istituzionale dell\'Istituto Calvino');
+    }
+
+    if (errors.length > 0) {
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = errors.join(', ');
+        return;
+    }
 });
 
 function buttonLogin(event) {

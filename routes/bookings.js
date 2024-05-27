@@ -1,14 +1,15 @@
+const Sequelize = require('sequelize');
+const express = require('express');
+const { authenticateToken } = require('../auth.js');
+const { Users, Rooms, Roles, Bookings, UsersRoles } = require('../sequelize/model.js');
+const { Op, where } = require('sequelize');
+
 //   +-------------------------------------------------+
 //   |   I require the modules that I'm going to use   |
 //   +-------------------------------------------------+
-const Sequelize = require('sequelize');
-const express = require('express')
-const router = express.Router()
+const router = express.Router();
 require('dotenv').config();
-const { authenticateToken } = require('../auth.js')
 //modelli sql
-const { Users, Rooms, Roles, Bookings, UsersRoles } = require('../sequelize/model.js')
-const { Op, where } = require('sequelize');
 
 //   +--------------------------------------------------+
 //   |   I start to write the code for the web server   |
@@ -20,10 +21,10 @@ const { Op, where } = require('sequelize');
     Method: POST
     Response: a message that confirms the booking
     Requirement: authentication token
- */
+*/
 router.post('/booksRoom', authenticateToken, async (req, res) => {
-    const { room, date, start_time, end_time, description } = req.body
-    const user_id = req.user.id
+    const { room, date, start_time, end_time, description } = req.body;
+    const user_id = req.user.id;
     if (!room || !date || !start_time || !end_time)
         return res.status(400).json({ error: 'Missing room or date' });
 
@@ -111,6 +112,7 @@ router.post('/deleteBooking', authenticateToken, async (req, res) => {
         res.status(500).json({ error: error.message });
     });
 });
+
 /*
     Description: get all the bookings of a specific room
     Path: http://localhost:3000/api/bookings/getBookingsOfRoom/:roomId
@@ -118,7 +120,7 @@ router.post('/deleteBooking', authenticateToken, async (req, res) => {
     Request parameters: the id of the room
     Response: the list of bookings of the room
     Requirement: authentication token
- */
+*/
 router.get('/getBookingsOfRoom/:roomId', authenticateToken, async (req, res) => {
     const { roomId } = req.params;
 
@@ -144,7 +146,6 @@ router.get('/getBookingsOfRoom/:roomId', authenticateToken, async (req, res) => 
     Path: http://localhost:3000/api/bookings/getBookingsOfDay/:roomId/:day
     Method: GET
 */
-
 router.get('/getBookingsOfRoom/:roomId/:day', authenticateToken, async (req, res) => {
     const { roomId, day } = req.params;
     console.log(day);
@@ -180,7 +181,7 @@ router.get('/getBookingsOfRoom/:roomId/:day', authenticateToken, async (req, res
     Request parameters: day (the format of the date must be YYYY-MM-DD)
     Response: the list of bookings of the day
     Requirement: authentication token
- */
+*/
 router.get('/getBookingsOfDay/:day', authenticateToken, async (req, res) => {
     const { day } = req.params;
 
@@ -203,7 +204,7 @@ router.get('/getBookingsOfDay/:day', authenticateToken, async (req, res) => {
     }).catch(error => {
         res.status(500).json({ error: error.message });
     });
-})
+});
 
 /*
     Description: get all the bookings of the current day
@@ -212,7 +213,7 @@ router.get('/getBookingsOfDay/:day', authenticateToken, async (req, res) => {
     Request parameters: nothing
     Response: the list of bookings of the current day
     Requirement: authentication token
- */
+*/
 router.get('/getBookingsOfDay', authenticateToken, async (req, res) => {
     const day = new Date().toISOString().slice(0, 10);
 
@@ -229,7 +230,6 @@ router.get('/getBookingsOfDay', authenticateToken, async (req, res) => {
     }).catch(error => {
         res.status(500).json({ error: error.message });
     });
-})
+});
 
-
-module.exports = router
+module.exports = router;

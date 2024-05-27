@@ -1,35 +1,35 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./seq.js');
+const nodemailer = require('nodemailer');
+
 let cryptoRandomString;
 import('crypto-random-string').then((module) => {
   cryptoRandomString = module.default;
 });
-const nodemailer = require('nodemailer');
 
 const Rooms = sequelize.define('rooms', {
-    room_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    description: Sequelize.STRING
-},
-{
-    tableName: 'rooms',
-    freezeTableName: true
+  room_id: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  description: Sequelize.STRING
+}, {
+  tableName: 'rooms',
+  freezeTableName: true
 });
 
 const Roles = sequelize.define('roles', {
   role_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
   role_name: {
-      type: Sequelize.STRING,
-      allowNull: false,
+    type: Sequelize.STRING,
+    allowNull: false,
   }
 }, {
   tableName: 'roles',
@@ -38,9 +38,9 @@ const Roles = sequelize.define('roles', {
 
 const Users = sequelize.define('users', {
   user_id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
   },
   name: Sequelize.STRING,
   surname: Sequelize.STRING,
@@ -63,7 +63,7 @@ Users.afterCreate(async (user, options) => {
           pass: process.env.EMAIL_PASSWORD
         }
       });
-    
+
       // Invia l'email
       let info = await transporter.sendMail({
         from: '"No Reply" <no-reply@example.com>',
@@ -76,15 +76,15 @@ Users.afterCreate(async (user, options) => {
       });
     };
   });
- 
+
 });
 
 const Bookings = sequelize.define('bookings', {
   booking_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
   room_id: Sequelize.INTEGER,
   date_day: Sequelize.DATE,
@@ -99,36 +99,36 @@ const Bookings = sequelize.define('bookings', {
 
 const UsersRoles = sequelize.define('users_roles', {
   user_role_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
   user_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
+    type: Sequelize.INTEGER,
+    allowNull: false,
   },
   role_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
+    type: Sequelize.INTEGER,
+    allowNull: false,
   }
 }, {
   tableName: 'users_roles',
   freezeTableName: true,
   indexes: [
     {
-        unique: true,
-        fields: ['user_id', 'role_id']
+      unique: true,
+      fields: ['user_id', 'role_id']
     }
   ]
 });
 
 const Email_verifications = sequelize.define('email_verifications', {
   email_verification_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
   user_id: Sequelize.INTEGER,
   token: Sequelize.STRING
@@ -139,10 +139,10 @@ const Email_verifications = sequelize.define('email_verifications', {
 
 const Password_recovery = sequelize.define('password_recovery', {
   password_recovery_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
   user_id: Sequelize.INTEGER,
   token: Sequelize.STRING,
@@ -166,4 +166,4 @@ Users.hasMany(Bookings, { foreignKey: 'user_id' });
 Bookings.belongsTo(Rooms, { foreignKey: 'room_id' });
 Rooms.hasMany(Bookings, { foreignKey: 'room_id' });
 
-module.exports = {Users, Rooms, Roles, Bookings, UsersRoles, Email_verifications, Password_recovery} 
+module.exports = { Users, Rooms, Roles, Bookings, UsersRoles, Email_verifications, Password_recovery }
