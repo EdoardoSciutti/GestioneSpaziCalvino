@@ -7,8 +7,14 @@ window.addEventListener('pageshow', function (event) {
     let errors = [];
 
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('error') === 'noCalvino') {
+    if (urlParams.get('error') === 'DominioNoCalvino') {
         errors.push('L\'email deve essere un\'email istituzionale dell\'Istituto Calvino');
+        urlParams.delete('error');
+        let newUrl = location.pathname;
+        if(urlParams.toString().length > 0) {
+            newUrl += `?${urlParams}`;
+        }
+        window.history.replaceState({}, '', newUrl);
     }
 
     if (errors.length > 0) {

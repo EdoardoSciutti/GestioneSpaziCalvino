@@ -267,7 +267,7 @@ router.get('/googleCallback',
   (err, req, res, next) => {
     if (err) {
       if (err.message === 'Invalid email domain') {
-        return res.redirect('/login?error=noCalvino');
+        return res.redirect('/login?error=DominioNoCalvino');
       }
       return next(err);
     }
