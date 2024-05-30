@@ -70,6 +70,4 @@ async function invioDati(roomId, beginTime, endTime, date, description) {
     } else {
         window.location.href = "/";
     }
-
-    console.log(data);
 }

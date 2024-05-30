@@ -17,11 +17,8 @@ async function invioDati(mail) {
     const data = await response.json();
 
     if (response.status === 400) {
-        console.log("Fallito: " + data.error);
+        console.log("Error: " + data.error);
     } else {
-        console.log("Riuscito: " + data.message);
         window.location.href = '/passwordSuccess'; // change this to the correct path
     }
-
-    console.log(data);
 }

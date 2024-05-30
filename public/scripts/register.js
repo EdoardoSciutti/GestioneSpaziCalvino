@@ -89,7 +89,7 @@ function buttonRegistrati(event){
             errorMessage.textContent = 'Email già utilizzata';
             email.classList.add('is-invalid');
         } else {
-            console.error(error); // Use console.error to log errors
+            console.error("Error:", error);
         }
     });
 }

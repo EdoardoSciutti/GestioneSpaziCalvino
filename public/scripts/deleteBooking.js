@@ -27,11 +27,10 @@ function searchBookings() {
             return response.json();
         })
         .then(data => {
-            console.log('Data:', data);
             creaCheckBox(data);
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
+            console.error('Error:', error);
         });
 }
 
@@ -122,11 +121,10 @@ function deleteBooking(start_time, end_time, room_description) {
             return response.json();
         })
         .then(data => {
-            console.log('Data:', data);
             searchBookings();
         })
         .catch(error => {
-            console.error('There was a problem with the delete operation:', error);
+            console.error('Error:', error);
             // Handle error or show a message to the user
         });
 }

@@ -35,9 +35,7 @@ function checkLoginStatus() {
     })
     .then(data => {
         if (data) {
-            console.log(data);
             if (data.success) {
-                console.log("Sei Loggato")
                 displayLoggedInElements();
             } else {
                 displayLoggedOutElements();
@@ -87,8 +85,6 @@ function logout() {
         if (data) {
             if (data.success) {
                 window.location.href = '/';
-            } else {
-                console.log('Errore durante il logout');
             }
         }
     })
@@ -128,13 +124,12 @@ function fetchBookings(roomId, date) {
             return response.json();
         })
         .then(data => displayResults(data, roomId))
-        .catch(error => console.error('There was a problem with your fetch operation:', error));
+        .catch(error => console.error('Error:', error));
 }
 
 function displayResults(data, roomId) {
     const resultsDiv = document.getElementById('results');
     const tableBody = document.getElementById('bookingTable').getElementsByTagName('tbody')[0];
-    console.log(data);
 
     let nomiStanze = ["Agorà", "Aula Magna", "Info 1", "Info 2", "Info 3", "Ele 1", "Ele 2", "Cad 1"]
 
@@ -145,7 +140,6 @@ function displayResults(data, roomId) {
         let roomCell = document.createElement('td');
         roomCell.textContent = `${nomiStanze[roomId-1]}`;
         roomCell.style.textAlign = 'left';
-        console.log(nomiStanze[roomId]);
         row.appendChild(roomCell);
         for (let hour = 7; hour <= 15; hour++) {
             let cell = document.createElement('td');

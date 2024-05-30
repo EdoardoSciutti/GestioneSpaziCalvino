@@ -62,13 +62,10 @@ async function invioDatiPassword(password) {
         const data = await response.json();
 
         if (response.status === 400) {
-            console.log("Fallito: " + data.error);
         } else {
-            console.log("Riucito: " + data.message);
             window.location.href = '/login';
         }
 
-        console.log(data);
     } catch (error) {
         console.error('Error:', error);
     }

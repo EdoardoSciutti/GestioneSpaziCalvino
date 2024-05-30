@@ -78,7 +78,7 @@ function buttonLogin(event) {
                 errorMessage.textContent = 'Utente non Verificato, vai sulla mail';
                 password.classList.add('is-invalid');
             } else {
-                console.error(error); // Use console.error to log errors
+                console.error("Error:", error);
             }
         });
 }
